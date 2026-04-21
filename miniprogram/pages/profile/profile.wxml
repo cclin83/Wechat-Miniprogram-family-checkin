@@ -1,0 +1,66 @@
+﻿<view class="page-profile">
+  <view class="user-card card">
+    <view class="flex-row" wx:if="{{userInfo}}">
+      <image class="avatar-large" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-info ml-sm flex-1">
+        <view class="user-name text-bold text-lg">{{userInfo.nickName || '未设置昵称'}}</view>
+        <view class="user-role text-sm mt-sm"><text class="role-badge role-{{role}}">{{role === 'admin' ? '管理员' : '成员'}}</text></view>
+      </view>
+    </view>
+    <button class="btn-secondary mt-md" wx:if="{{!userInfo}}" bindtap="getUserProfile">点击登录</button>
+  </view>
+  <view class="stats-card card" wx:if="{{familyId}}">
+    <view class="stats-row flex-between">
+      <view class="stat-item"><view class="stat-num text-primary">{{totalCheckins}}</view><view class="stat-label text-sm text-secondary">打卡天数</view></view>
+      <view class="stat-divider"></view>
+      <view class="stat-item"><view class="stat-num" style="color:#E6A800;">{{totalCoins}}</view><view class="stat-label text-sm text-secondary">家庭币</view></view>
+      <view class="stat-divider"></view>
+      <view class="stat-item"><view class="stat-num text-primary">{{streak}}</view><view class="stat-label text-sm text-secondary">连续打卡</view></view>
+      <view class="stat-divider"></view>
+      <view class="stat-item"><view class="stat-num text-primary">{{totalStepsFormatted}}</view><view class="stat-label text-sm text-secondary">总步数</view></view>
+    </view>
+  </view>
+  <view class="section-block">
+    <view class="section-header text-bold">家庭</view>
+    <block wx:if="{{familyId}}">
+      <view class="menu-card card">
+        <view class="menu-item flex-between" bindtap="showFamilyInfo"><view class="flex-row"><text class="menu-icon">👨‍👩‍👧‍👦</text><text class="ml-sm">{{familyName}}</text></view><text class="menu-arrow">›</text></view>
+        <view class="menu-item flex-between" bindtap="showInviteCode" wx:if="{{isAdmin}}"><view class="flex-row"><text class="menu-icon">🔗</text><text class="ml-sm">邀请码</text></view><view class="flex-row"><text class="text-sm text-secondary mr-sm">{{inviteCode}}</text><text class="menu-arrow">›</text></view></view>
+        <view class="menu-item flex-between" bindtap="showMembers"><view class="flex-row"><text class="menu-icon">👥</text><text class="ml-sm">家庭成员</text></view><view class="flex-row"><text class="text-sm text-secondary mr-sm">{{memberCount}}人</text><text class="menu-arrow">›</text></view></view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="menu-card card">
+        <view class="menu-item flex-between" bindtap="createFamily"><view class="flex-row"><text class="menu-icon">➕</text><text class="ml-sm">创建家庭</text></view><text class="menu-arrow">›</text></view>
+        <view class="menu-item flex-between" bindtap="joinFamily"><view class="flex-row"><text class="menu-icon">🔗</text><text class="ml-sm">加入家庭</text></view><text class="menu-arrow">›</text></view>
+      </view>
+    </block>
+  </view>
+  <view class="section-block">
+    <view class="section-header text-bold">设置</view>
+    <view class="menu-card card">
+      <view class="menu-item flex-between" bindtap="toggleLargeText"><view class="flex-row"><text class="menu-icon">🔤</text><text class="ml-sm">大字模式</text></view><switch checked="{{largeText}}" color="#FF8C42" bindchange="toggleLargeText"/></view>
+      <view class="menu-item flex-between" bindtap="showAbout"><view class="flex-row"><text class="menu-icon">ℹ️</text><text class="ml-sm">关于</text></view><text class="menu-arrow">›</text></view>
+    </view>
+  </view>
+  <view class="modal-mask" wx:if="{{showMembersModal}}" bindtap="hideMembersModal"></view>
+  <view class="modal-panel {{showMembersModal ? 'show' : ''}}">
+    <view class="modal-header flex-between"><text class="text-bold text-lg">家庭成员</text><text class="modal-close" bindtap="hideMembersModal">✕</text></view>
+    <view class="modal-body">
+      <view class="member-list-item flex-row" wx:for="{{members}}" wx:key="openid">
+        <image class="avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="flex-1 ml-sm"><view class="text-bold">{{item.nickName}}</view><view class="text-sm text-secondary">{{item.role === 'admin' ? '管理员' : '成员'}} · 打卡{{item.totalCheckins || 0}}天</view></view>
+        <view class="text-sm text-primary">{{item.coins || 0}}币</view>
+      </view>
+    </view>
+  </view>
+  <view class="modal-mask" wx:if="{{showInviteModal}}" bindtap="hideInviteModal"></view>
+  <view class="invite-panel {{showInviteModal ? 'show' : ''}}">
+    <view class="invite-content text-center">
+      <view class="invite-title text-bold text-lg">邀请家人加入</view>
+      <view class="invite-desc text-sm text-secondary mt-sm">让家人打开小程序，在"我的"页面输入邀请码即可加入</view>
+      <view class="invite-code-display mt-lg">{{inviteCode}}</view>
+      <button class="btn-primary mt-lg" bindtap="copyInviteCode">复制邀请码</button>
+    </view>
+  </view>
+</view>

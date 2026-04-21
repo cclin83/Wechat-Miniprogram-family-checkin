@@ -1,0 +1,41 @@
+﻿.page-shop { padding: 24rpx 24rpx 120rpx; min-height: 100vh; box-sizing: border-box; }
+.coin-header { padding: 32rpx; background: linear-gradient(135deg, #FFF8E1, #FFFFFF); }
+.coin-big-icon { font-size: 64rpx; }
+.coin-amount { font-size: 56rpx; font-weight: 800; color: #E6A800; line-height: 1.2; }
+.add-reward-bar { padding: 24rpx 32rpx; }
+.reward-section { margin-top: 16rpx; }
+.section-title { padding: 8rpx; font-size: 32rpx; }
+.reward-card { padding: 28rpx 32rpx; }
+.reward-type-icon { width: 80rpx; height: 80rpx; background: var(--bg); border-radius: 20rpx; display: flex; align-items: center; justify-content: center; font-size: 40rpx; }
+.reward-name { font-size: 32rpx; } .reward-desc { margin-top: 4rpx; line-height: 1.4; }
+.reward-price { display: flex; align-items: baseline; gap: 4rpx; }
+.price-num { font-size: 44rpx; font-weight: 800; color: #E6A800; } .price-unit { font-size: 24rpx; color: var(--text-secondary); }
+.reward-bottom { padding-top: 16rpx; border-top: 1rpx solid var(--border); }
+.redeem-btn { background: var(--primary) !important; color: #FFF !important; font-size: 26rpx !important; padding: 12rpx 32rpx !important; border-radius: 32rpx !important; line-height: 1.4 !important; min-height: auto !important; font-weight: 600; }
+.redeem-btn.disabled { background: var(--text-light) !important; opacity: 0.6; }
+.admin-actions { gap: 24rpx; padding-top: 12rpx; }
+.admin-btn { font-size: 24rpx; color: var(--text-secondary); padding: 4rpx 12rpx; } .admin-btn.danger { color: #FF4757; }
+.modal-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; }
+.modal-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #FFF; border-radius: 32rpx 32rpx 0 0; z-index: 201; max-height: 85vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s ease; }
+.modal-panel.show { transform: translateY(0); }
+.modal-header { padding: 32rpx 32rpx 16rpx; position: sticky; top: 0; background: #FFF; border-radius: 32rpx 32rpx 0 0; }
+.modal-close { font-size: 36rpx; color: var(--text-secondary); padding: 8rpx; }
+.modal-body { padding: 16rpx 32rpx; }
+.modal-footer { padding: 24rpx 32rpx; padding-bottom: calc(24rpx + env(safe-area-inset-bottom)); }
+.form-group { margin-bottom: 28rpx; } .form-label { font-size: 28rpx; font-weight: 600; margin-bottom: 12rpx; display: block; }
+.form-input { background: var(--bg); border-radius: 16rpx; padding: 20rpx 24rpx; font-size: 30rpx; }
+.form-textarea { background: var(--bg); border-radius: 16rpx; padding: 20rpx 24rpx; font-size: 30rpx; width: 100%; min-height: 120rpx; box-sizing: border-box; }
+.type-options { gap: 16rpx; flex-wrap: wrap; }
+.type-option { font-size: 26rpx; padding: 12rpx 24rpx; background: var(--bg); border-radius: 24rpx; border: 2rpx solid transparent; }
+.type-option.selected { background: #FFF3E8; border-color: var(--primary); color: var(--primary); }
+.upload-area { width: 240rpx; height: 240rpx; border: 2rpx dashed var(--border); border-radius: 16rpx; overflow: hidden; }
+.upload-preview { width: 100%; height: 100%; }
+.upload-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8rpx; color: var(--text-secondary); }
+.upload-icon { font-size: 56rpx; color: var(--text-light); } .upload-text { font-size: 24rpx; }
+.redeem-success-panel { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.8); background: #FFF; border-radius: 32rpx; padding: 60rpx 48rpx; z-index: 201; text-align: center; width: 80%; max-width: 600rpx; opacity: 0; transition: all 0.3s ease; }
+.redeem-success-panel.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.success-animation { font-size: 120rpx; margin-bottom: 16rpx; }
+.success-title { font-size: 40rpx; font-weight: 700; margin-bottom: 12rpx; }
+.success-reward-name { font-size: 30rpx; color: var(--text-secondary); margin-bottom: 32rpx; }
+.success-text-content { background: var(--bg); border-radius: 16rpx; padding: 24rpx; font-size: 30rpx; line-height: 1.8; text-align: left; color: var(--primary-dark); }
+.success-image { width: 100%; border-radius: 16rpx; }
