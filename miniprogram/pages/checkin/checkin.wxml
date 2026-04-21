@@ -1,0 +1,74 @@
+﻿<view class="page-checkin">
+  <view class="steps-hero card">
+    <view class="steps-ring-big">
+      <canvas canvas-id="steps-ring" class="steps-ring-canvas"></canvas>
+      <view class="steps-center">
+        <view class="steps-number">{{stepsFormatted}}</view>
+        <view class="steps-label">步</view>
+      </view>
+    </view>
+    <view class="steps-targets flex-between mt-md">
+      <view class="target-item {{steps >= 3000 ? 'reached' : ''}}">
+        <text class="target-icon">🪙</text><text class="target-text">3000步</text><text class="target-coin">+1币</text>
+      </view>
+      <view class="target-item {{steps >= 5000 ? 'reached' : ''}}">
+        <text class="target-icon">🪙🪙</text><text class="target-text">5000步</text><text class="target-coin">+2币</text>
+      </view>
+      <view class="target-item {{steps >= 8000 ? 'reached' : ''}}">
+        <text class="target-icon">🪙🪙🪙</text><text class="target-text">8000步</text><text class="target-coin">+3币</text>
+      </view>
+    </view>
+    <button class="btn-primary mt-lg sync-btn" bindtap="syncSteps" loading="{{syncing}}">{{syncing ? '同步中...' : '同步微信运动步数'}}</button>
+    <view class="text-sm text-secondary text-center mt-sm" wx:if="{{lastSyncTime}}">上次同步：{{lastSyncTime}}</view>
+  </view>
+  <view class="checkin-post card" wx:if="{{steps >= 3000}}">
+    <view class="post-header flex-between"><text class="text-bold">记录今天的散步</text><text class="text-sm text-secondary">可选</text></view>
+    <view class="mood-tags flex-row mt-md">
+      <view class="mood-item {{selectedMood === item.emoji + ' ' + item.text ? 'selected' : ''}}" wx:for="{{moodTags}}" wx:key="text" bindtap="selectMood" data-mood="{{item.emoji}} {{item.text}}">
+        <text>{{item.emoji}} {{item.text}}</text>
+      </view>
+    </view>
+    <textarea class="post-textarea mt-md" placeholder="今天散步看到了什么？想说点什么？" maxlength="200" value="{{postContent}}" bindinput="onPostInput"></textarea>
+    <view class="post-images flex-row mt-md">
+      <view class="img-item" wx:for="{{postImages}}" wx:key="*this">
+        <image class="uploaded-img" src="{{item}}" mode="aspectFill"></image>
+        <view class="img-delete" bindtap="deleteImage" data-index="{{index}}">✕</view>
+      </view>
+      <view class="img-add" bindtap="chooseImage" wx:if="{{postImages.length < 3}}">
+        <text class="img-add-icon">📷</text><text class="img-add-text">添加照片</text>
+      </view>
+    </view>
+    <button class="btn-primary mt-lg checkin-btn" bindtap="doCheckin" loading="{{checking}}">{{alreadyChecked ? '更新打卡' : '完成打卡 🎉'}}</button>
+  </view>
+  <view class="card not-reached" wx:if="{{steps < 3000 && steps > 0}}">
+    <view class="text-center">
+      <text class="encourage-emoji">💪</text>
+      <view class="mt-sm text-bold">还差 {{3000 - steps}} 步就能获得金币啦</view>
+      <view class="text-sm text-secondary mt-sm">出去走走吧，外面的风景很好哦</view>
+    </view>
+  </view>
+  <view class="calendar-section card mt-md">
+    <view class="calendar-header flex-between">
+      <view class="flex-row">
+        <text class="calendar-arrow" bindtap="prevMonth">◀</text>
+        <text class="calendar-title">{{calendarYear}}年{{calendarMonth + 1}}月</text>
+        <text class="calendar-arrow" bindtap="nextMonth">▶</text>
+      </view>
+      <view class="streak-badge" wx:if="{{streak > 0}}"><text>🔥 连续{{streak}}天</text></view>
+    </view>
+    <view class="calendar-weekdays flex-row">
+      <text class="weekday" wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="calendar-grid">
+      <view class="calendar-day {{item.empty ? 'empty' : ''}} {{item.checked ? 'checked' : ''}} {{item.isToday ? 'today' : ''}}" wx:for="{{calendar}}" wx:key="date">
+        <text wx:if="{{!item.empty}}">{{item.day}}</text>
+        <view class="day-dot" wx:if="{{item.checked}}"></view>
+      </view>
+    </view>
+    <view class="month-stats flex-between mt-md">
+      <view class="stat-block"><text class="stat-value">{{monthCheckins}}</text><text class="stat-desc">打卡天数</text></view>
+      <view class="stat-block"><text class="stat-value">{{monthCoins}}</text><text class="stat-desc">获得金币</text></view>
+      <view class="stat-block"><text class="stat-value">{{monthStepsFormatted}}</text><text class="stat-desc">总步数</text></view>
+    </view>
+  </view>
+</view>

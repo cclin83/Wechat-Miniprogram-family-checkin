@@ -1,0 +1,39 @@
+﻿page {
+  --primary: #FF8C42;
+  --primary-light: #FFB380;
+  --primary-dark: #E07030;
+  --bg: #FFF8F0;
+  --bg-card: #FFFFFF;
+  --text-primary: #333333;
+  --text-secondary: #888888;
+  --text-light: #BBBBBB;
+  --border: #F0E8E0;
+  --success: #4CAF50;
+  --coin: #FFD700;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 32rpx;
+  line-height: 1.6;
+}
+.container { padding: 24rpx 32rpx; box-sizing: border-box; }
+.card { background: var(--bg-card); border-radius: 24rpx; padding: 32rpx; margin-bottom: 24rpx; box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04); }
+.btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #FFFFFF; border: none; border-radius: 48rpx; padding: 24rpx 48rpx; font-size: 34rpx; font-weight: 600; text-align: center; box-shadow: 0 8rpx 24rpx rgba(255,140,66,0.3); }
+.btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+.btn-secondary { background: var(--bg); color: var(--primary); border: 2rpx solid var(--primary); border-radius: 48rpx; padding: 22rpx 48rpx; font-size: 34rpx; font-weight: 600; text-align: center; }
+.avatar { width: 80rpx; height: 80rpx; border-radius: 50%; overflow: hidden; }
+.avatar-large { width: 120rpx; height: 120rpx; border-radius: 50%; overflow: hidden; }
+.flex-row { display: flex; flex-direction: row; align-items: center; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-1 { flex: 1; }
+.mt-sm { margin-top: 16rpx; } .mt-md { margin-top: 24rpx; } .mt-lg { margin-top: 40rpx; }
+.mb-sm { margin-bottom: 16rpx; } .mb-md { margin-bottom: 24rpx; } .mb-lg { margin-bottom: 40rpx; }
+.ml-sm { margin-left: 16rpx; } .mr-sm { margin-right: 16rpx; }
+.text-center { text-align: center; } .text-sm { font-size: 26rpx; } .text-md { font-size: 32rpx; }
+.text-lg { font-size: 40rpx; } .text-xl { font-size: 52rpx; } .text-bold { font-weight: 700; }
+.text-secondary { color: var(--text-secondary); } .text-light { color: var(--text-light); } .text-primary { color: var(--primary); }
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80rpx 40rpx; color: var(--text-light); }
+.empty-state .empty-icon { font-size: 120rpx; margin-bottom: 24rpx; }
+.divider { height: 1rpx; background: var(--border); margin: 24rpx 0; }

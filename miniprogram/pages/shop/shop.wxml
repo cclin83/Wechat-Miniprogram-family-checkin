@@ -1,0 +1,71 @@
+﻿<view class="page-shop">
+  <view class="coin-header card">
+    <view class="coin-balance flex-row">
+      <text class="coin-big-icon">🪙</text>
+      <view class="ml-sm"><view class="text-sm text-secondary">我的家庭币</view><view class="coin-amount">{{userCoins}}</view></view>
+    </view>
+  </view>
+  <view class="add-reward-bar flex-between card" wx:if="{{isAdmin}}">
+    <view><view class="text-bold">管理奖品</view><view class="text-sm text-secondary">为家人设置温暖的奖励</view></view>
+    <button class="btn-secondary" bindtap="showAddReward">+ 添加</button>
+  </view>
+  <view class="reward-section">
+    <view class="section-title text-bold mb-md">可兑换奖品</view>
+    <view class="empty-state" wx:if="{{rewards.length === 0}}">
+      <view class="empty-icon">🎁</view><view>还没有奖品</view>
+      <view class="text-sm text-secondary mt-sm" wx:if="{{isAdmin}}">点击上方"添加"设置奖品吧</view>
+      <view class="text-sm text-secondary mt-sm" wx:else>等管理员设置奖品哦</view>
+    </view>
+    <view class="reward-card card" wx:for="{{rewards}}" wx:key="_id" bindtap="onRewardTap" data-index="{{index}}">
+      <view class="reward-top flex-row">
+        <view class="reward-type-icon">
+          <text wx:if="{{item.type === 'photo'}}">📸</text><text wx:elif="{{item.type === 'voice'}}">🎤</text>
+          <text wx:elif="{{item.type === 'video'}}">🎬</text><text wx:else>💌</text>
+        </view>
+        <view class="flex-1 ml-sm"><view class="reward-name text-bold">{{item.name}}</view><view class="reward-desc text-sm text-secondary">{{item.description}}</view></view>
+        <view class="reward-price"><text class="price-num">{{item.coinsNeeded}}</text><text class="price-unit">币</text></view>
+      </view>
+      <view class="reward-bottom flex-between mt-md">
+        <view class="text-sm text-secondary">剩余 {{item.stock - item.redeemed}} / {{item.stock}}</view>
+        <button class="redeem-btn {{userCoins >= item.coinsNeeded && item.stock > item.redeemed ? '' : 'disabled'}}" catchtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">{{userCoins >= item.coinsNeeded ? '兑换' : '金币不足'}}</button>
+      </view>
+      <view class="admin-actions flex-row mt-sm" wx:if="{{isAdmin}}" catchtap="preventBubble">
+        <text class="admin-btn" catchtap="editReward" data-index="{{index}}">编辑</text>
+        <text class="admin-btn danger" catchtap="deleteReward" data-index="{{index}}" data-id="{{item._id}}">删除</text>
+      </view>
+    </view>
+  </view>
+  <view class="modal-mask" wx:if="{{showModal}}" bindtap="hideModal"></view>
+  <view class="modal-panel {{showModal ? 'show' : ''}}">
+    <view class="modal-header flex-between"><text class="text-bold text-lg">{{editingReward ? '编辑奖品' : '添加奖品'}}</text><text class="modal-close" bindtap="hideModal">✕</text></view>
+    <view class="modal-body">
+      <view class="form-group"><text class="form-label">奖品名称</text><input class="form-input" placeholder="例如：宝宝的一张照片" value="{{formName}}" bindinput="onFormInput" data-field="formName"/></view>
+      <view class="form-group"><text class="form-label">描述（可选）</text><input class="form-input" placeholder="简单描述一下这个奖品" value="{{formDesc}}" bindinput="onFormInput" data-field="formDesc"/></view>
+      <view class="form-group"><text class="form-label">所需金币</text><input class="form-input" type="number" placeholder="例如：30" value="{{formCoins}}" bindinput="onFormInput" data-field="formCoins"/></view>
+      <view class="form-group"><text class="form-label">奖品类型</text>
+        <view class="type-options flex-row">
+          <view class="type-option {{formType === 'photo' ? 'selected' : ''}}" bindtap="selectType" data-type="photo">📸 照片</view>
+          <view class="type-option {{formType === 'voice' ? 'selected' : ''}}" bindtap="selectType" data-type="voice">🎤 语音</view>
+          <view class="type-option {{formType === 'text' ? 'selected' : ''}}" bindtap="selectType" data-type="text">💌 文字</view>
+          <view class="type-option {{formType === 'video' ? 'selected' : ''}}" bindtap="selectType" data-type="video">🎬 视频</view>
+        </view>
+      </view>
+      <view class="form-group" wx:if="{{formType === 'text'}}"><text class="form-label">文字内容</text><textarea class="form-textarea" placeholder="写一段鼓励的话..." value="{{formTextContent}}" bindinput="onFormInput" data-field="formTextContent"></textarea></view>
+      <view class="form-group" wx:if="{{formType === 'photo' || formType === 'video'}}"><text class="form-label">上传{{formType === 'photo' ? '照片' : '视频'}}</text>
+        <view class="upload-area" bindtap="uploadMedia">
+          <image wx:if="{{formMediaUrl}}" class="upload-preview" src="{{formMediaUrl}}" mode="aspectFill"></image>
+          <view wx:else class="upload-placeholder"><text class="upload-icon">+</text><text class="upload-text">点击上传</text></view>
+        </view>
+      </view>
+      <view class="form-group"><text class="form-label">可兑换次数</text><input class="form-input" type="number" placeholder="例如：1" value="{{formStock}}" bindinput="onFormInput" data-field="formStock"/></view>
+    </view>
+    <view class="modal-footer"><button class="btn-primary" bindtap="saveReward" loading="{{saving}}">{{saving ? '保存中...' : '保存'}}</button></view>
+  </view>
+  <view class="modal-mask" wx:if="{{showRedeemSuccess}}" bindtap="hideRedeemSuccess"></view>
+  <view class="redeem-success-panel {{showRedeemSuccess ? 'show' : ''}}">
+    <view class="success-animation">🎉</view><view class="success-title">兑换成功！</view><view class="success-reward-name">{{redeemedReward.name}}</view>
+    <view class="success-content" wx:if="{{redeemedReward.type === 'text'}}"><view class="success-text-content">{{redeemedReward.textContent}}</view></view>
+    <view class="success-content" wx:if="{{redeemedReward.type === 'photo'}}"><image class="success-image" src="{{redeemedReward.mediaUrl}}" mode="widthFix"></image></view>
+    <button class="btn-primary mt-lg" bindtap="hideRedeemSuccess">太棒了</button>
+  </view>
+</view>

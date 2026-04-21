@@ -1,0 +1,98 @@
+﻿<view class="page-index">
+  <view class="welcome-card card" wx:if="{{!familyId}}">
+    <view class="welcome-emoji">👨‍👩‍👧‍👦</view>
+    <view class="welcome-title">欢迎来到亲情健步</view>
+    <view class="welcome-desc">创建或加入一个家庭，和家人一起健康打卡吧</view>
+    <view class="welcome-actions">
+      <button class="btn-primary" bindtap="goCreateFamily">创建家庭</button>
+      <button class="btn-secondary mt-md" bindtap="goJoinFamily">加入家庭</button>
+    </view>
+  </view>
+  <block wx:else>
+    <view class="family-overview card">
+      <view class="family-name">{{familyName}}</view>
+      <view class="members-steps flex-row">
+        <view class="member-ring" wx:for="{{members}}" wx:key="openid" bindtap="onMemberTap" data-openid="{{item.openid}}">
+          <view class="ring-wrapper">
+            <canvas canvas-id="ring-{{index}}" id="ring-{{index}}" class="ring-canvas"></canvas>
+            <image class="member-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          </view>
+          <view class="member-name">{{item.nickName}}</view>
+          <view class="member-steps-num">{{item.todayStepsFormatted}}</view>
+        </view>
+      </view>
+      <view class="family-total flex-between mt-md">
+        <text class="text-secondary text-sm">今日家庭总步数</text>
+        <text class="text-primary text-bold">{{totalStepsFormatted}}</text>
+      </view>
+    </view>
+    <view class="coin-banner card flex-between" wx:if="{{todayCoins > 0}}">
+      <view class="flex-row">
+        <text class="coin-icon">🪙</text>
+        <view class="ml-sm">
+          <view class="text-bold">今日获得 {{todayCoins}} 枚家庭币</view>
+          <view class="text-sm text-secondary">累计 {{totalCoins}} 枚</view>
+        </view>
+      </view>
+      <view class="coin-badge">+{{todayCoins}}</view>
+    </view>
+    <view class="feed-section">
+      <view class="section-title flex-between">
+        <text class="text-bold">家庭动态</text>
+      </view>
+      <view class="empty-state" wx:if="{{feedList.length === 0 && !loading}}">
+        <view class="empty-icon">🌱</view>
+        <view>还没有动态</view>
+        <view class="text-sm text-secondary mt-sm">去打卡页面走一走，发条动态吧</view>
+      </view>
+      <view class="feed-item card" wx:for="{{feedList}}" wx:key="_id">
+        <view class="feed-header flex-row">
+          <image class="avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          <view class="feed-user-info ml-sm flex-1">
+            <view class="feed-nickname text-bold">{{item.nickName}}</view>
+            <view class="feed-time text-sm text-secondary">{{item.timeAgo}}</view>
+          </view>
+          <view class="feed-tag feed-tag-{{item.type}}">
+            <text wx:if="{{item.type === 'checkin'}}">🚶 打卡</text>
+            <text wx:elif="{{item.type === 'reward'}}">🎁 兑换</text>
+            <text wx:elif="{{item.type === 'exercise'}}">💪 健身</text>
+            <text wx:else>💬 分享</text>
+          </view>
+        </view>
+        <view class="feed-checkin-data flex-row" wx:if="{{item.type === 'checkin' && item.steps}}">
+          <view class="checkin-stat"><text class="stat-num">{{item.stepsFormatted}}</text><text class="stat-label">步</text></view>
+          <view class="checkin-stat" wx:if="{{item.coins > 0}}"><text class="stat-num coin-color">+{{item.coins}}</text><text class="stat-label">家庭币</text></view>
+        </view>
+        <view class="feed-mood" wx:if="{{item.mood}}"><text class="mood-tag">{{item.mood}}</text></view>
+        <view class="feed-content" wx:if="{{item.content}}">{{item.content}}</view>
+        <view class="feed-images" wx:if="{{item.images && item.images.length > 0}}">
+          <image class="feed-img feed-img-{{item.images.length > 1 ? 'multi' : 'single'}}" wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="aspectFill" bindtap="previewImage" data-urls="{{item.images}}" data-current="{{img}}"></image>
+        </view>
+        <view class="feed-actions flex-row">
+          <view class="action-btn flex-row {{item.liked ? 'liked' : ''}}" bindtap="onLike" data-id="{{item._id}}" data-index="{{index}}">
+            <text>{{item.liked ? '❤️' : '🤍'}}</text>
+            <text class="action-count" wx:if="{{item.likes.length > 0}}">{{item.likes.length}}</text>
+          </view>
+          <view class="action-btn flex-row ml-sm" bindtap="onComment" data-id="{{item._id}}" data-index="{{index}}">
+            <text>💬</text>
+            <text class="action-count" wx:if="{{item.comments.length > 0}}">{{item.comments.length}}</text>
+          </view>
+        </view>
+        <view class="feed-comments" wx:if="{{item.comments && item.comments.length > 0}}">
+          <view class="divider"></view>
+          <view class="comment-item" wx:for="{{item.comments}}" wx:for-item="comment" wx:key="createdAt">
+            <text class="comment-name text-primary">{{comment.nickName}}</text>
+            <text class="comment-text">：{{comment.content}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="load-more text-center text-sm text-secondary" wx:if="{{hasMore}}"><text bindtap="loadMore">加载更多...</text></view>
+      <view class="load-more text-center text-sm text-light" wx:if="{{!hasMore && feedList.length > 0}}">— 没有更多了 —</view>
+    </view>
+  </block>
+  <view class="comment-input-mask" wx:if="{{showCommentInput}}" bindtap="hideCommentInput"></view>
+  <view class="comment-input-bar {{showCommentInput ? 'show' : ''}}" wx:if="{{showCommentInput}}">
+    <input class="comment-input" placeholder="写点什么..." value="{{commentText}}" bindinput="onCommentInput" focus="{{showCommentInput}}" confirm-type="send" bindconfirm="submitComment"/>
+    <button class="comment-send-btn" bindtap="submitComment">发送</button>
+  </view>
+</view>

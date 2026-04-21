@@ -1,0 +1,5 @@
+﻿node_modules/
+.DS_Store
+*.log
+miniprogram_npm/
+cloudfunctions/*/node_modules/

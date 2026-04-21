@@ -1,0 +1,30 @@
+﻿{
+  "pages": [
+    "pages/index/index",
+    "pages/checkin/checkin",
+    "pages/shop/shop",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF8C42",
+    "navigationBarTitleText": "亲情健步",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#FFF8F0"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#FF8C42",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {"pagePath": "pages/index/index", "text": "家庭", "iconPath": "images/tab-home.png", "selectedIconPath": "images/tab-home-active.png"},
+      {"pagePath": "pages/checkin/checkin", "text": "打卡", "iconPath": "images/tab-checkin.png", "selectedIconPath": "images/tab-checkin-active.png"},
+      {"pagePath": "pages/shop/shop", "text": "兑换", "iconPath": "images/tab-shop.png", "selectedIconPath": "images/tab-shop-active.png"},
+      {"pagePath": "pages/profile/profile", "text": "我的", "iconPath": "images/tab-profile.png", "selectedIconPath": "images/tab-profile-active.png"}
+    ]
+  },
+  "cloud": true,
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

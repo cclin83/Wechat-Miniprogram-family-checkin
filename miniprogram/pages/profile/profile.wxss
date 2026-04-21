@@ -1,0 +1,20 @@
+﻿.page-profile { padding: 24rpx 24rpx 120rpx; min-height: 100vh; box-sizing: border-box; }
+.user-card { padding: 40rpx 32rpx; }
+.role-badge { display: inline-block; font-size: 22rpx; padding: 4rpx 16rpx; border-radius: 12rpx; }
+.role-admin { background: #FFF3E8; color: var(--primary); } .role-member { background: #E8F5E9; color: #4CAF50; }
+.stats-card { padding: 32rpx; } .stats-row { text-align: center; }
+.stat-item { flex: 1; } .stat-num { font-size: 40rpx; font-weight: 700; line-height: 1.2; } .stat-label { margin-top: 8rpx; }
+.stat-divider { width: 1rpx; height: 60rpx; background: var(--border); }
+.section-block { margin-top: 32rpx; } .section-header { font-size: 30rpx; padding: 8rpx 8rpx 16rpx; color: var(--text-secondary); }
+.menu-card { padding: 0 32rpx; } .menu-item { padding: 28rpx 0; border-bottom: 1rpx solid var(--border); } .menu-item:last-child { border-bottom: none; }
+.menu-icon { font-size: 36rpx; width: 44rpx; text-align: center; } .menu-arrow { font-size: 32rpx; color: var(--text-light); }
+.modal-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; }
+.modal-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #FFF; border-radius: 32rpx 32rpx 0 0; z-index: 201; max-height: 70vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s ease; }
+.modal-panel.show { transform: translateY(0); }
+.modal-header { padding: 32rpx 32rpx 16rpx; position: sticky; top: 0; background: #FFF; border-radius: 32rpx 32rpx 0 0; }
+.modal-close { font-size: 36rpx; color: var(--text-secondary); padding: 8rpx; }
+.modal-body { padding: 16rpx 32rpx 48rpx; }
+.member-list-item { padding: 20rpx 0; border-bottom: 1rpx solid var(--border); } .member-list-item:last-child { border-bottom: none; }
+.invite-panel { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.8); background: #FFF; border-radius: 32rpx; padding: 60rpx 48rpx; z-index: 201; width: 80%; max-width: 600rpx; opacity: 0; transition: all 0.3s ease; }
+.invite-panel.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.invite-code-display { font-size: 64rpx; font-weight: 800; letter-spacing: 16rpx; color: var(--primary); background: var(--bg); padding: 32rpx; border-radius: 20rpx; }
