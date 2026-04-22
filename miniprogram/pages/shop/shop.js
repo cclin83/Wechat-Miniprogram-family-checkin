@@ -40,6 +40,18 @@ Page({
       success: function(res) {
         if (!res.confirm) return
         dbUtil.redeemReward(id, that.data.openid, that.data.userCoins).then(function(rewardData) {
+          // 如果有云文件ID，先转临时URL再显示
+          if (rewardData.mediaUrl && rewardData.mediaUrl.indexOf('cloud://') === 0) {
+            return wx.cloud.getTempFileURL({ fileList: [rewardData.mediaUrl] }).then(function(res) {
+              var fileInfo = res.fileList && res.fileList[0]
+              if (fileInfo && fileInfo.tempFileURL) {
+                rewardData.mediaUrl = fileInfo.tempFileURL
+              }
+              return rewardData
+            })
+          }
+          return rewardData
+        }).then(function(rewardData) {
           that.setData({ userCoins: that.data.userCoins - reward.coinsNeeded, showRedeemSuccess: true, redeemedReward: rewardData })
           var userInfo = app.globalData.userInfo || {}
           return dbUtil.postFeed({ familyId: that.data.familyId, openid: that.data.openid, nickName: userInfo.nickName||'家人', avatarUrl: userInfo.avatarUrl||'', type: 'reward', content: '兑换了奖品「' + reward.name + '」', steps: 0, coins: -reward.coinsNeeded })
