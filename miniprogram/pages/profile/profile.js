@@ -18,7 +18,7 @@ Page({
     else if (options.action === 'join') this.joinFamily()
   },
   async onShow() {
-    this.setData({ largeText: wx.getStorageSync("largeText") || false }) await this.loadUserData() },
+    this.setData({ largeText: wx.getStorageSync("largeText") || false }); await this.loadUserData() },
   async loadUserData() {
     try {
       const user = await dbUtil.getUserByOpenid(this.data.openid)

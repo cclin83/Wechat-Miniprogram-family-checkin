@@ -19,7 +19,7 @@ Page({
     await this.loadCalendar()
   },
   async onShow() {
-    this.setData({ largeText: wx.getStorageSync("largeText") || false }) if (this.data.openid) await this.loadTodayData() },
+    this.setData({ largeText: wx.getStorageSync("largeText") || false }); if (this.data.openid) await this.loadTodayData() },
   async loadTodayData() {
     try {
       const checkin = await dbUtil.getTodayCheckin(this.data.openid)
