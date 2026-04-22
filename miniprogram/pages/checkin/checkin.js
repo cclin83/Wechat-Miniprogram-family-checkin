@@ -27,10 +27,14 @@ Page({
     this.setData({ largeText: wx.getStorageSync("largeText") || false }); var cached = wx.getStorageSync("todaySteps"); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }) } var that = this; setTimeout(function() { that.drawStepsRing() }, 100); if (this.data.openid) { try { await this.loadTodayData() } catch(e) {} } },
   async loadTodayData() {
     try {
-      const checkin = await dbUtil.getTodayCheckin(this.data.openid)
-      if (checkin) { this.setData({ steps: checkin.steps, stepsFormatted: util.formatSteps(checkin.steps), alreadyChecked: true, selectedMood: checkin.mood||'', postContent: checkin.content||'', postImages: checkin.images||[] }) } else { var cached = wx.getStorageSync('todaySteps'); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }) } }
-      this.drawStepsRing()
-    } catch (err) { console.error('加载今日数据失败:', err); var cached = wx.getStorageSync('todaySteps'); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }); this.drawStepsRing() } }
+      var checkin = await dbUtil.getTodayCheckin(this.data.openid)
+      if (checkin) {
+        this.setData({ steps: checkin.steps, stepsFormatted: util.formatSteps(checkin.steps), alreadyChecked: true, selectedMood: checkin.mood||'', postContent: checkin.content||'', postImages: checkin.images||[] })
+        this.drawStepsRing()
+      }
+    } catch (err) {
+      console.error('loadTodayData error:', err)
+    }
   },
   syncSteps() {
     if (this.data.syncing) return
