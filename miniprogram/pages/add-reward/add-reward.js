@@ -34,8 +34,31 @@ Page({
 
   uploadMedia() {
     var that = this
-    var mediaType = this.data.formType === 'video' ? 'video' : 'image'
-    if (mediaType === 'image') {
+    if (this.data.formType === 'video') {
+      wx.chooseVideo({
+        sourceType: ['album', 'camera'],
+        maxDuration: 60,
+        compressed: true,
+        success: function(res) {
+          wx.showLoading({ title: '上传中...' })
+          var filePath = res.tempFilePath
+          var cloudPath = 'rewards/' + Date.now() + '-' + Math.random().toString(36).substr(2, 8) + '.mp4'
+          wx.cloud.uploadFile({
+            cloudPath: cloudPath,
+            filePath: filePath,
+            success: function(uploadRes) {
+              that.setData({ formMediaUrl: uploadRes.fileID })
+              wx.hideLoading()
+              wx.showToast({ title: '上传成功', icon: 'success' })
+            },
+            fail: function() {
+              wx.hideLoading()
+              wx.showToast({ title: '上传失败', icon: 'none' })
+            }
+          })
+        }
+      })
+    } else {
       wx.chooseImage({
         count: 1,
         success: function(res) {
@@ -48,6 +71,7 @@ Page({
             success: function(uploadRes) {
               that.setData({ formMediaUrl: uploadRes.fileID })
               wx.hideLoading()
+              wx.showToast({ title: '上传成功', icon: 'success' })
             },
             fail: function() {
               wx.hideLoading()
