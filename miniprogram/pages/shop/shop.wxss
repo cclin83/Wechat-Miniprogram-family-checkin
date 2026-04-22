@@ -11,8 +11,9 @@
 .reward-price { display: flex; align-items: baseline; gap: 4rpx; }
 .price-num { font-size: 44rpx; font-weight: 800; color: #E6A800; } .price-unit { font-size: 24rpx; color: var(--text-secondary); }
 .reward-bottom { padding-top: 16rpx; border-top: 1rpx solid var(--border); }
-.redeem-btn { background: var(--primary) !important; color: #FFF !important; font-size: 26rpx !important; padding: 12rpx 32rpx !important; border-radius: 32rpx !important; line-height: 1.4 !important; min-height: auto !important; font-weight: 600; }
-.redeem-btn.disabled { background: var(--text-light) !important; opacity: 0.6; }
+.redeem-btn-wrap { padding: 8rpx 0; }
+.redeem-btn-text { display: inline-block; background: var(--primary); color: #FFF; font-size: 26rpx; padding: 12rpx 32rpx; border-radius: 32rpx; line-height: 1.4; font-weight: 600; }
+.redeem-btn-text.disabled { background: var(--text-light); opacity: 0.6; }
 .admin-actions { gap: 24rpx; padding-top: 12rpx; }
 .admin-btn { font-size: 24rpx; color: var(--text-secondary); padding: 4rpx 12rpx; } .admin-btn.danger { color: #FF4757; }
 .modal-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; }

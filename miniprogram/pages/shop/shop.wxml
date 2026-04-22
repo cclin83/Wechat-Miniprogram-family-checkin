@@ -1,4 +1,5 @@
 <view class="page-shop {{largeText ? 'large-text' : ''}}">
+  <view style="background:red;color:white;padding:20rpx;text-align:center;font-size:36rpx;" bindtap="onTestRedeem">测试兑换点击</view>
   <view class="coin-header card">
     <view class="coin-balance flex-row">
       <text class="coin-big-icon">🪙</text>
@@ -16,8 +17,8 @@
       <view class="text-sm text-secondary mt-sm" wx:if="{{isAdmin}}">点击上方"添加"设置奖品吧</view>
       <view class="text-sm text-secondary mt-sm" wx:else>等管理员设置奖品哦</view>
     </view>
-    <view class="reward-card card" wx:for="{{rewards}}" wx:key="_id" bindtap="onRewardTap" data-index="{{index}}">
-      <view class="reward-top flex-row">
+    <view class="reward-card card" wx:for="{{rewards}}" wx:key="_id">
+      <view class="reward-top flex-row" bindtap="onRewardTap" data-index="{{index}}">
         <view class="reward-type-icon">
           <text wx:if="{{item.type === 'photo'}}">📸</text><text wx:elif="{{item.type === 'voice'}}">🎤</text>
           <text wx:elif="{{item.type === 'video'}}">🎬</text><text wx:else>💌</text>
@@ -25,21 +26,23 @@
         <view class="flex-1 ml-sm"><view class="reward-name text-bold">{{item.name}}</view><view class="reward-desc text-sm text-secondary">{{item.description}}</view></view>
         <view class="reward-price"><text class="price-num">{{item.coinsNeeded}}</text><text class="price-unit">币</text></view>
       </view>
-      <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'voice'}}" catchtap="playRewardVoice" data-url="{{item.mediaUrl}}"><text class="preview-btn">▶️ 试听</text></view>
+      <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'voice'}}" bindtap="playRewardVoice" data-url="{{item.mediaUrl}}"><text class="preview-btn">▶️ 试听</text></view>
       <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'video' && item.mediaUrl}}"><video class="reward-video" src="{{item.mediaUrl}}" controls></video></view>
-      <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'photo' && item.mediaUrl}}"><image class="reward-image" src="{{item.mediaUrl}}" mode="widthFix" catchtap="previewRewardImage" data-url="{{item.mediaUrl}}"></image></view>
+      <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'photo' && item.mediaUrl}}"><image class="reward-image" src="{{item.mediaUrl}}" mode="widthFix" bindtap="previewRewardImage" data-url="{{item.mediaUrl}}"></image></view>
       <view class="reward-bottom flex-between mt-md">
-        <view class="text-sm text-secondary">剩余 {{item.stock - item.redeemed}} / {{item.stock}}</view>
-        <button class="redeem-btn {{userCoins >= item.coinsNeeded && item.stock > item.redeemed ? '' : 'disabled'}}" catchtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">{{userCoins >= item.coinsNeeded ? '兑换' : '金币不足'}}</button>
+        <view class="text-sm text-secondary">剩余 {{item.stock - (item.redeemed || 0)}} / {{item.stock}}</view>
+        <view class="redeem-btn-wrap" bindtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">
+          <text class="redeem-btn-text {{userCoins >= item.coinsNeeded && item.stock > (item.redeemed || 0) ? '' : 'disabled'}}">{{userCoins >= item.coinsNeeded ? '兑换' : '金币不足'}}</text>
+        </view>
       </view>
-      <view class="admin-actions flex-row mt-sm" wx:if="{{isAdmin}}" catchtap="preventBubble">
-        <text class="admin-btn" catchtap="editReward" data-index="{{index}}">编辑</text>
-        <text class="admin-btn danger" catchtap="deleteReward" data-index="{{index}}" data-id="{{item._id}}">删除</text>
+      <view class="admin-actions flex-row mt-sm" wx:if="{{isAdmin}}">
+        <text class="admin-btn" bindtap="editReward" data-index="{{index}}">编辑</text>
+        <text class="admin-btn danger" bindtap="deleteReward" data-index="{{index}}" data-id="{{item._id}}">删除</text>
       </view>
     </view>
   </view>
   <view class="modal-mask" wx:if="{{showModal}}" catchtap="hideModal"></view>
-  <view class="modal-panel {{showModal ? 'show' : ''}}">
+  <view class="modal-panel {{showModal ? 'show' : ''}}" wx:if="{{showModal}}">
     <view class="modal-header flex-between"><text class="text-bold text-lg">{{editingReward ? '编辑奖品' : '添加奖品'}}</text><text class="modal-close" bindtap="hideModal">✕</text></view>
     <scroll-view scroll-y class="modal-body">
       <view class="form-group"><text class="form-label">奖品名称</text><input class="form-input" placeholder="例如：宝宝的一张照片" value="{{formName}}" bindinput="onFormInput" data-field="formName"/></view>
@@ -65,7 +68,7 @@
     <view class="modal-footer"><button class="btn-primary" bindtap="saveReward" loading="{{saving}}">{{saving ? '保存中...' : '保存'}}</button></view>
   </view>
   <view class="modal-mask" wx:if="{{showRedeemSuccess}}" bindtap="hideRedeemSuccess"></view>
-  <view class="redeem-success-panel {{showRedeemSuccess ? 'show' : ''}}">
+  <view class="redeem-success-panel {{showRedeemSuccess ? 'show' : ''}}" wx:if="{{showRedeemSuccess}}">
     <view class="success-animation">🎉</view><view class="success-title">兑换成功！</view><view class="success-reward-name">{{redeemedReward.name}}</view>
     <view class="success-content" wx:if="{{redeemedReward.type === 'text'}}"><view class="success-text-content">{{redeemedReward.textContent}}</view></view>
     <view class="success-content" wx:if="{{redeemedReward.type === 'photo'}}"><image class="success-image" src="{{redeemedReward.mediaUrl}}" mode="widthFix"></image></view>

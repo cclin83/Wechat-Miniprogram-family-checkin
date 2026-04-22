@@ -22,20 +22,48 @@ Page({
   async onPullDownRefresh() { await this.loadRewards(); const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); wx.stopPullDownRefresh() },
   async loadRewards() { if (!this.data.familyId) return; try { this.setData({ rewards: await dbUtil.getRewardList(this.data.familyId) }) } catch(e) { console.error('加载奖品失败:',e) } },
   onRewardTap(e) { const r = this.data.rewards[e.currentTarget.dataset.index]; if (r.type==='text'&&r.textContent) wx.showModal({ title: r.name, content: r.textContent, showCancel: false, confirmText: '知道了' }) },
-  async onRedeem(e) {
-    const { index, id } = e.currentTarget.dataset; const reward = this.data.rewards[index]
+  onTestRedeem() {
+    console.log('[onTestRedeem] clicked!')
+    console.log('rewards:', JSON.stringify(this.data.rewards))
+    console.log('userCoins:', this.data.userCoins)
+    if (this.data.rewards.length > 0) {
+      var reward = this.data.rewards[0]
+      wx.showModal({
+        title: '测试兑换',
+        content: '奖品: ' + reward.name + ', 需要: ' + reward.coinsNeeded + '币, 你有: ' + this.data.userCoins + '币, redeemed: ' + reward.redeemed + ', stock: ' + reward.stock,
+        showCancel: false
+      })
+    } else {
+      wx.showModal({ title: '测试', content: '没有奖品数据', showCancel: false })
+    }
+  },
+  onRedeem(e) {
+    console.log('[onRedeem] triggered', e.currentTarget.dataset)
+    var that = this
+    var index = parseInt(e.currentTarget.dataset.index)
+    var id = e.currentTarget.dataset.id
+    var reward = this.data.rewards[index]
+    console.log('[onRedeem] reward:', reward, 'userCoins:', this.data.userCoins)
+    if (!reward) { wx.showToast({ title: '奖品数据异常', icon: 'none' }); return }
     if (this.data.userCoins < reward.coinsNeeded) { wx.showToast({ title: '金币不足，继续加油', icon: 'none' }); return }
-    if (reward.redeemed >= reward.stock) { wx.showToast({ title: '奖品已兑完', icon: 'none' }); return }
-    wx.showModal({ title: '确认兑换', content: `花费 ${reward.coinsNeeded} 枚家庭币兑换「${reward.name}」？`, confirmText: '兑换', confirmColor: '#FF8C42',
-      success: async (res) => {
+    if ((reward.redeemed || 0) >= reward.stock) { wx.showToast({ title: '奖品已兑完', icon: 'none' }); return }
+    wx.showModal({
+      title: '确认兑换',
+      content: '花费 ' + reward.coinsNeeded + ' 枚家庭币兑换「' + reward.name + '」？',
+      confirmText: '兑换',
+      confirmColor: '#FF8C42',
+      success: function(res) {
         if (!res.confirm) return
-        try {
-          const rewardData = await dbUtil.redeemReward(id, this.data.openid, this.data.userCoins)
-          this.setData({ userCoins: this.data.userCoins - reward.coinsNeeded, showRedeemSuccess: true, redeemedReward: rewardData })
-          const userInfo = app.globalData.userInfo || {}
-          await dbUtil.postFeed({ familyId: this.data.familyId, openid: this.data.openid, nickName: userInfo.nickName||'家人', avatarUrl: userInfo.avatarUrl||'', type: 'reward', content: `兑换了奖品「${reward.name}」`, steps: 0, coins: -reward.coinsNeeded })
-          await this.loadRewards()
-        } catch (err) { console.error('兑换失败:',err); wx.showToast({ title: err.message||'兑换失败', icon: 'none' }) }
+        dbUtil.redeemReward(id, that.data.openid, that.data.userCoins).then(function(rewardData) {
+          that.setData({ userCoins: that.data.userCoins - reward.coinsNeeded, showRedeemSuccess: true, redeemedReward: rewardData })
+          var userInfo = app.globalData.userInfo || {}
+          return dbUtil.postFeed({ familyId: that.data.familyId, openid: that.data.openid, nickName: userInfo.nickName||'家人', avatarUrl: userInfo.avatarUrl||'', type: 'reward', content: '兑换了奖品「' + reward.name + '」', steps: 0, coins: -reward.coinsNeeded })
+        }).then(function() {
+          return that.loadRewards()
+        }).catch(function(err) {
+          console.error('兑换失败:', err)
+          wx.showToast({ title: err.message||'兑换失败', icon: 'none' })
+        })
       }
     })
   },
@@ -74,20 +102,63 @@ Page({
   },
   playRewardVoice(e) {
     var url = e.currentTarget.dataset.url
-    if (!url) return
-    var audio = wx.createInnerAudioContext()
-    audio.src = url
-    audio.play()
-    wx.showToast({ title: '播放中...', icon: 'none' })
+    console.log('[playRewardVoice] url:', url)
+    if (!url) { wx.showToast({ title: '没有语音文件', icon: 'none' }); return }
+    this._playAudio(url)
   },
   previewRewardImage(e) {
     wx.previewImage({ urls: [e.currentTarget.dataset.url] })
   },
   playRedeemVoice() {
     if (!this.data.redeemedReward || !this.data.redeemedReward.mediaUrl) return
+    this._playAudio(this.data.redeemedReward.mediaUrl)
+  },
+  _playAudio(fileIdOrUrl) {
+    var that = this
+    wx.showLoading({ title: '加载中...' })
+    // 如果是云文件ID，先获取临时URL
+    if (fileIdOrUrl.indexOf('cloud://') === 0) {
+      wx.cloud.getTempFileURL({
+        fileList: [fileIdOrUrl],
+        success: function(res) {
+          wx.hideLoading()
+          var fileInfo = res.fileList && res.fileList[0]
+          if (fileInfo && fileInfo.tempFileURL) {
+            that._doPlay(fileInfo.tempFileURL)
+          } else {
+            wx.showToast({ title: '获取语音地址失败', icon: 'none' })
+          }
+        },
+        fail: function(err) {
+          wx.hideLoading()
+          console.error('getTempFileURL fail:', err)
+          wx.showToast({ title: '获取语音地址失败', icon: 'none' })
+        }
+      })
+    } else {
+      wx.hideLoading()
+      that._doPlay(fileIdOrUrl)
+    }
+  },
+  _doPlay(url) {
+    console.log('[_doPlay] playing:', url)
+    // 停止之前的播放
+    if (this._audioCtx) {
+      this._audioCtx.stop()
+      this._audioCtx.destroy()
+    }
     var audio = wx.createInnerAudioContext()
-    audio.src = this.data.redeemedReward.mediaUrl
+    audio.src = url
+    audio.obeyMuteSwitch = false
+    audio.onPlay(function() {
+      wx.showToast({ title: '播放中...', icon: 'none', duration: 3000 })
+    })
+    audio.onError(function(err) {
+      console.error('audio play error:', err)
+      wx.showToast({ title: '播放失败', icon: 'none' })
+    })
     audio.play()
+    this._audioCtx = audio
   },
   preventBubble() {}
 })
