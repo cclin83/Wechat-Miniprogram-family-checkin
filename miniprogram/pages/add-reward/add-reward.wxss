@@ -1,22 +1,36 @@
 .page-add-reward { padding: 32rpx; min-height: 100vh; box-sizing: border-box; background: var(--bg); }
 .form-group { margin-bottom: 32rpx; }
-.form-label { font-size: 28rpx; font-weight: 600; margin-bottom: 12rpx; display: block; color: var(--text-primary); }
+.form-label { font-size: 28rpx; font-weight: 600; margin-bottom: 8rpx; display: block; color: var(--text-primary); }
+.form-hint { font-size: 24rpx; color: var(--text-secondary); margin-bottom: 12rpx; display: block; }
 .form-input { background: #FFF; border-radius: 16rpx; padding: 24rpx; font-size: 32rpx; width: 100%; box-sizing: border-box; border: 2rpx solid var(--border); height: 88rpx; line-height: 40rpx; }
 .form-textarea { background: #FFF; border-radius: 16rpx; padding: 24rpx; font-size: 32rpx; width: 100%; min-height: 160rpx; box-sizing: border-box; border: 2rpx solid var(--border); }
 .type-options { gap: 16rpx; flex-wrap: wrap; display: flex; }
 .type-option { font-size: 26rpx; padding: 16rpx 28rpx; background: #FFF; border-radius: 24rpx; border: 2rpx solid var(--border); }
 .type-option.selected { background: #FFF3E8; border-color: var(--primary); color: var(--primary); }
-.upload-area { width: 240rpx; height: 240rpx; border: 2rpx dashed var(--border); border-radius: 16rpx; overflow: hidden; background: #FFF; }
-.upload-preview { width: 100%; height: 100%; }
-.upload-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8rpx; color: var(--text-secondary); }
-.upload-icon { font-size: 56rpx; color: var(--text-light); }
-.upload-text { font-size: 24rpx; }
-.form-footer { padding: 32rpx 0; padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); }
 
-.voice-area { display: flex; flex-direction: column; align-items: center; gap: 24rpx; }
-.voice-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 240rpx; height: 240rpx; border-radius: 50%; background: #FFF; border: 4rpx solid var(--border); gap: 12rpx; }
+/* 批量媒体网格 */
+.media-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.media-item { position: relative; width: 200rpx; height: 200rpx; border-radius: 12rpx; overflow: hidden; }
+.media-thumb { width: 100%; height: 100%; }
+.media-thumb-video { width: 200rpx; height: 200rpx; }
+.media-remove { position: absolute; top: 4rpx; right: 4rpx; width: 40rpx; height: 40rpx; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24rpx; }
+.media-add { width: 200rpx; height: 200rpx; border: 2rpx dashed var(--border); border-radius: 12rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8rpx; background: #FFF; }
+.add-icon { font-size: 48rpx; color: var(--text-light); }
+.add-text { font-size: 24rpx; color: var(--text-secondary); }
+
+/* 语音 */
+.voice-list { margin-bottom: 24rpx; }
+.voice-item { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 24rpx; background: #FFF; border-radius: 12rpx; margin-bottom: 12rpx; font-size: 28rpx; }
+.voice-actions { display: flex; gap: 24rpx; }
+.voice-play { color: var(--primary); font-size: 26rpx; }
+.voice-del { color: #FF4757; font-size: 26rpx; }
+.voice-record-area { display: flex; justify-content: center; padding: 24rpx 0; }
+.voice-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 200rpx; height: 200rpx; border-radius: 50%; background: #FFF; border: 4rpx solid var(--border); gap: 12rpx; }
 .voice-btn.recording { background: #FFF0F0; border-color: #FF4757; }
-.voice-icon { font-size: 64rpx; }
-.voice-tip { font-size: 24rpx; color: var(--text-secondary); }
-.voice-preview { display: flex; align-items: center; gap: 16rpx; font-size: 28rpx; color: var(--text-secondary); }
-.voice-play-btn { color: var(--primary); font-weight: 600; padding: 8rpx 24rpx; background: #FFF3E8; border-radius: 24rpx; }
+.voice-icon { font-size: 56rpx; }
+.voice-tip { font-size: 22rpx; color: var(--text-secondary); }
+
+/* 保存摘要 */
+.save-summary { text-align: center; padding: 16rpx; background: #FFF3E8; border-radius: 12rpx; margin-bottom: 24rpx; font-size: 28rpx; color: var(--primary); }
+
+.form-footer { padding: 32rpx 0; padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); }

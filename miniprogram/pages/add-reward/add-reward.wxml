@@ -1,16 +1,17 @@
 <view class="page-add-reward">
   <view class="form-group">
     <text class="form-label">奖品名称</text>
-    <input class="form-input" placeholder="例如：宝宝的一张照片" value="{{formName}}" bindinput="onInput" data-field="formName"/>
+    <text class="form-hint">批量添加时自动加序号，如“宝宝照片 1”“宝宝照片 2”</text>
+    <input class="form-input" placeholder="例如：宝宝的照片" value="{{formName}}" bindinput="onInput" data-field="formName"/>
   </view>
 
   <view class="form-group">
     <text class="form-label">描述（可选）</text>
-    <input class="form-input" placeholder="简单描述一下这个奖品" value="{{formDesc}}" bindinput="onInput" data-field="formDesc"/>
+    <input class="form-input" placeholder="简单描述一下" value="{{formDesc}}" bindinput="onInput" data-field="formDesc"/>
   </view>
 
   <view class="form-group">
-    <text class="form-label">所需金币</text>
+    <text class="form-label">每个奖品所需金币</text>
     <input class="form-input" type="number" placeholder="例如：30" value="{{formCoins}}" bindinput="onInput" data-field="formCoins"/>
   </view>
 
@@ -24,43 +25,72 @@
     </view>
   </view>
 
-  <view class="form-group" wx:if="{{formType === 'voice'}}">
-    <text class="form-label">录制语音</text>
-    <view class="voice-area">
-      <view class="voice-btn {{recording ? 'recording' : ''}}" bindtouchstart="startRecord" bindtouchend="stopRecord">
-        <text class="voice-icon">{{recording ? '🔴' : '🎤'}}</text>
-        <text class="voice-tip">{{recording ? '录音中...松开结束' : '按住录音'}}</text>
+  <!-- 照片批量上传 -->
+  <view class="form-group" wx:if="{{formType === 'photo'}}">
+    <text class="form-label">上传照片（可多选，最多9张）</text>
+    <view class="media-grid">
+      <view class="media-item" wx:for="{{mediaList}}" wx:key="tempPath">
+        <image class="media-thumb" src="{{item.tempPath}}" mode="aspectFill" bindtap="previewMedia" data-index="{{index}}"></image>
+        <view class="media-remove" catchtap="removeMedia" data-index="{{index}}">x</view>
       </view>
-      <view class="voice-preview" wx:if="{{formMediaUrl}}">
-        <text>✅ 语音已录制</text>
-        <view class="voice-play-btn" bindtap="playVoice">▶️ 播放</view>
+      <view class="media-add" bindtap="chooseMedia" wx:if="{{mediaList.length < 9}}">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加</text>
       </view>
     </view>
   </view>
 
+  <!-- 视频上传 -->
+  <view class="form-group" wx:if="{{formType === 'video'}}">
+    <text class="form-label">上传视频（可多个）</text>
+    <view class="media-grid">
+      <view class="media-item" wx:for="{{mediaList}}" wx:key="tempPath">
+        <video class="media-thumb-video" src="{{item.tempPath}}" autoplay="{{false}}"></video>
+        <view class="media-remove" catchtap="removeMedia" data-index="{{index}}">x</view>
+      </view>
+      <view class="media-add" bindtap="chooseMedia">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 语音录制 -->
+  <view class="form-group" wx:if="{{formType === 'voice'}}">
+    <text class="form-label">录制语音（可多条）</text>
+    <view class="voice-list">
+      <view class="voice-item" wx:for="{{mediaList}}" wx:key="tempPath">
+        <text>🎤 语音 {{index + 1}}</text>
+        <view class="voice-actions">
+          <text class="voice-play" bindtap="playVoice" data-index="{{index}}">▶️ 播放</text>
+          <text class="voice-del" bindtap="removeMedia" data-index="{{index}}">删除</text>
+        </view>
+      </view>
+    </view>
+    <view class="voice-record-area">
+      <view class="voice-btn {{recording ? 'recording' : ''}}" bindtouchstart="startRecord" bindtouchend="stopRecord">
+        <text class="voice-icon">{{recording ? '🔴' : '🎤'}}</text>
+        <text class="voice-tip">{{recording ? '录音中...松开结束' : '按住录音'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文字内容 -->
   <view class="form-group" wx:if="{{formType === 'text'}}">
     <text class="form-label">文字内容</text>
     <textarea class="form-textarea" placeholder="写一段鼓励的话..." value="{{formTextContent}}" bindinput="onInput" data-field="formTextContent"></textarea>
   </view>
 
-  <view class="form-group" wx:if="{{formType === 'photo' || formType === 'video'}}">
-    <text class="form-label">上传{{formType === 'photo' ? '照片' : '视频'}}</text>
-    <view class="upload-area" bindtap="uploadMedia">
-      <image wx:if="{{formMediaUrl && formType === 'photo'}}" class="upload-preview" src="{{formMediaUrl}}" mode="aspectFill"></image>
-      <video wx:elif="{{formMediaUrl && formType === 'video'}}" class="upload-preview" src="{{formMediaUrl}}" autoplay="{{false}}" muted="{{true}}"></video>
-      <view wx:else class="upload-placeholder">
-        <text class="upload-icon">+</text>
-        <text class="upload-text">点击上传</text>
-      </view>
-    </view>
-  </view>
-
   <view class="form-group">
-    <text class="form-label">可兑换次数</text>
+    <text class="form-label">每个奖品可兑换次数</text>
     <input class="form-input" type="number" placeholder="例如：1" value="{{formStock}}" bindinput="onInput" data-field="formStock"/>
   </view>
 
+  <view class="save-summary" wx:if="{{mediaList.length > 1}}">
+    <text>将创建 {{mediaList.length}} 个奖品，每个 {{formCoins || 0}} 金币</text>
+  </view>
+
   <view class="form-footer">
-    <button class="btn-primary" bindtap="saveReward" loading="{{saving}}">{{saving ? '保存中...' : '保存'}}</button>
+    <button class="btn-primary" bindtap="saveReward" loading="{{saving}}">{{uploadProgress || (saving ? '保存中...' : '保存')}}</button>
   </view>
 </view>
