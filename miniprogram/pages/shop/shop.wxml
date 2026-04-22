@@ -35,10 +35,10 @@
       </view>
     </view>
   </view>
-  <view class="modal-mask" wx:if="{{showModal}}" bindtap="hideModal"></view>
+  <view class="modal-mask" wx:if="{{showModal}}" catchtap="hideModal"></view>
   <view class="modal-panel {{showModal ? 'show' : ''}}">
     <view class="modal-header flex-between"><text class="text-bold text-lg">{{editingReward ? '编辑奖品' : '添加奖品'}}</text><text class="modal-close" bindtap="hideModal">✕</text></view>
-    <view class="modal-body" catchtap="preventBubble">
+    <scroll-view scroll-y class="modal-body">
       <view class="form-group"><text class="form-label">奖品名称</text><input class="form-input" placeholder="例如：宝宝的一张照片" value="{{formName}}" bindinput="onFormInput" data-field="formName"/></view>
       <view class="form-group"><text class="form-label">描述（可选）</text><input class="form-input" placeholder="简单描述一下这个奖品" value="{{formDesc}}" bindinput="onFormInput" data-field="formDesc"/></view>
       <view class="form-group"><text class="form-label">所需金币</text><input class="form-input" type="number" placeholder="例如：30" value="{{formCoins}}" bindinput="onFormInput" data-field="formCoins"/></view>
@@ -58,7 +58,7 @@
         </view>
       </view>
       <view class="form-group"><text class="form-label">可兑换次数</text><input class="form-input" type="number" placeholder="例如：1" value="{{formStock}}" bindinput="onFormInput" data-field="formStock"/></view>
-    </view>
+    </scroll-view>
     <view class="modal-footer"><button class="btn-primary" bindtap="saveReward" loading="{{saving}}">{{saving ? '保存中...' : '保存'}}</button></view>
   </view>
   <view class="modal-mask" wx:if="{{showRedeemSuccess}}" bindtap="hideRedeemSuccess"></view>
