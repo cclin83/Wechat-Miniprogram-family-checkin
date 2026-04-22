@@ -46,7 +46,8 @@
   <view class="form-group" wx:if="{{formType === 'photo' || formType === 'video'}}">
     <text class="form-label">上传{{formType === 'photo' ? '照片' : '视频'}}</text>
     <view class="upload-area" bindtap="uploadMedia">
-      <image wx:if="{{formMediaUrl}}" class="upload-preview" src="{{formMediaUrl}}" mode="aspectFill"></image>
+      <image wx:if="{{formMediaUrl && formType === 'photo'}}" class="upload-preview" src="{{formMediaUrl}}" mode="aspectFill"></image>
+      <video wx:elif="{{formMediaUrl && formType === 'video'}}" class="upload-preview" src="{{formMediaUrl}}" autoplay="{{false}}" muted="{{true}}"></video>
       <view wx:else class="upload-placeholder">
         <text class="upload-icon">+</text>
         <text class="upload-text">点击上传</text>
