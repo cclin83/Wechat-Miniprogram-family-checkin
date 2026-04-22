@@ -24,7 +24,7 @@ Page({
     await this.loadCalendar()
   },
   async onShow() {
-    this.setData({ largeText: wx.getStorageSync("largeText") || false }); var cached = wx.getStorageSync("todaySteps"); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }) } var that = this; setTimeout(function() { that.drawStepsRing() }, 100); if (this.data.openid) { try { await this.loadTodayData() } catch(e) {} } },
+    var cached = wx.getStorageSync("todaySteps"); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps), largeText: wx.getStorageSync("largeText") || false }) } else { this.setData({ largeText: wx.getStorageSync("largeText") || false }) } var that = this; setTimeout(function() { that.drawStepsRing() }, 100) },
   async loadTodayData() {
     try {
       var checkin = await dbUtil.getTodayCheckin(this.data.openid)
