@@ -1,4 +1,4 @@
-﻿page {
+page {
   --primary: #FF8C42;
   --primary-light: #FFB380;
   --primary-dark: #E07030;

@@ -1,4 +1,4 @@
-﻿.page-shop { padding: 24rpx 24rpx 120rpx; min-height: 100vh; box-sizing: border-box; }
+.page-shop { padding: 24rpx 24rpx 120rpx; min-height: 100vh; box-sizing: border-box; }
 .coin-header { padding: 32rpx; background: linear-gradient(135deg, #FFF8E1, #FFFFFF); }
 .coin-big-icon { font-size: 64rpx; }
 .coin-amount { font-size: 56rpx; font-weight: 800; color: #E6A800; line-height: 1.2; }

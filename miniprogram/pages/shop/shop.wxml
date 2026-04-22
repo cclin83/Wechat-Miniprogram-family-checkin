@@ -1,4 +1,4 @@
-﻿<view class="page-shop">
+<view class="page-shop">
   <view class="coin-header card">
     <view class="coin-balance flex-row">
       <text class="coin-big-icon">🪙</text>

@@ -1,4 +1,4 @@
-﻿const app = getApp()
+const app = getApp()
 const dbUtil = require('../../utils/db')
 const util = require('../../utils/util')
 Page({

@@ -1,8 +1,15 @@
-﻿const db = wx.cloud.database()
-const _ = db.command
-const collections = {
-  users: db.collection('users'), families: db.collection('families'),
-  checkins: db.collection('checkins'), rewards: db.collection('rewards'), feeds: db.collection('feeds')
+var db = null
+var _ = null
+var collections = {}
+try {
+  db = wx.cloud.database()
+  _ = db.command
+  collections = {
+    users: db.collection('users'), families: db.collection('families'),
+    checkins: db.collection('checkins'), rewards: db.collection('rewards'), feeds: db.collection('feeds')
+  }
+} catch (e) {
+  console.log('cloud database not available', e)
 }
 async function getOrCreateUser(openid, userInfo) {
   const res = await collections.users.where({ openid }).get()

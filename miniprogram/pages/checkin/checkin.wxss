@@ -1,4 +1,4 @@
-﻿.page-checkin { padding: 24rpx 24rpx 120rpx; min-height: 100vh; box-sizing: border-box; }
+.page-checkin { padding: 24rpx 24rpx 120rpx; min-height: 100vh; box-sizing: border-box; }
 .steps-hero { text-align: center; padding: 48rpx 32rpx; }
 .steps-ring-big { position: relative; width: 360rpx; height: 360rpx; margin: 0 auto; }
 .steps-ring-canvas { width: 360rpx; height: 360rpx; }

@@ -1,13 +1,15 @@
-﻿App({
+App({
   onLaunch() {
-    if (!wx.cloud) {
-      console.error('请使用 2.2.3 或以上的基础库以使用云能力')
-      return
+    try {
+      if (wx.cloud) {
+        wx.cloud.init({
+          env: 'your-env-id',
+          traceUser: true
+        })
+      }
+    } catch (e) {
+      console.log('cloud init skip', e)
     }
-    wx.cloud.init({
-      env: 'your-env-id',
-      traceUser: true
-    })
     this.globalData = {
       userInfo: null,
       familyId: null,

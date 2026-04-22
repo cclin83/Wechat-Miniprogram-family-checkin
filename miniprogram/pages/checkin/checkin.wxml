@@ -1,4 +1,4 @@
-﻿<view class="page-checkin">
+<view class="page-checkin">
   <view class="steps-hero card">
     <view class="steps-ring-big">
       <canvas canvas-id="steps-ring" class="steps-ring-canvas"></canvas>

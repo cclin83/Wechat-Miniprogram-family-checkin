@@ -1,4 +1,4 @@
-﻿const app = getApp()
+const app = getApp()
 const db = require('../../utils/db')
 const util = require('../../utils/util')
 Page({
@@ -10,6 +10,10 @@ Page({
   },
   async onLoad() {
     try {
+      if (!db.db) {
+        console.log('cloud not ready, show welcome')
+        return
+      }
       const openid = await app.getOpenid()
       this.setData({ openid })
       const user = await db.getUserByOpenid(openid)
