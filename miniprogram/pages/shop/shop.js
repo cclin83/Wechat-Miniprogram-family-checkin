@@ -9,9 +9,11 @@ Page({
     showRedeemSuccess: false, redeemedReward: {}
   },
   async onLoad() {
-    const openid = await app.getOpenid()
-    const user = await dbUtil.getUserByOpenid(openid)
-    if (user) { this.setData({ openid, userCoins: user.coins||0, isAdmin: user.role==='admin', familyId: user.familyId }); await this.loadRewards() }
+    try {
+      const openid = await app.getOpenid()
+      const user = await dbUtil.getUserByOpenid(openid)
+      if (user) { this.setData({ openid, userCoins: user.coins||0, isAdmin: user.role==='admin', familyId: user.familyId }); await this.loadRewards() }
+    } catch(e) { console.error('shop onLoad error:', e) }
   },
   async onShow() {
     this.setData({ largeText: wx.getStorageSync("largeText") || false })
