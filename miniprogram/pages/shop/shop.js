@@ -22,21 +22,6 @@ Page({
   async onPullDownRefresh() { await this.loadRewards(); const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); wx.stopPullDownRefresh() },
   async loadRewards() { if (!this.data.familyId) return; try { this.setData({ rewards: await dbUtil.getRewardList(this.data.familyId) }) } catch(e) { console.error('加载奖品失败:',e) } },
   onRewardTap(e) { const r = this.data.rewards[e.currentTarget.dataset.index]; if (r.type==='text'&&r.textContent) wx.showModal({ title: r.name, content: r.textContent, showCancel: false, confirmText: '知道了' }) },
-  onTestRedeem() {
-    console.log('[onTestRedeem] clicked!')
-    console.log('rewards:', JSON.stringify(this.data.rewards))
-    console.log('userCoins:', this.data.userCoins)
-    if (this.data.rewards.length > 0) {
-      var reward = this.data.rewards[0]
-      wx.showModal({
-        title: '测试兑换',
-        content: '奖品: ' + reward.name + ', 需要: ' + reward.coinsNeeded + '币, 你有: ' + this.data.userCoins + '币, redeemed: ' + reward.redeemed + ', stock: ' + reward.stock,
-        showCancel: false
-      })
-    } else {
-      wx.showModal({ title: '测试', content: '没有奖品数据', showCancel: false })
-    }
-  },
   onRedeem(e) {
     console.log('[onRedeem] triggered', e.currentTarget.dataset)
     var that = this

@@ -1,5 +1,4 @@
 <view class="page-shop {{largeText ? 'large-text' : ''}}">
-  <view style="background:red;color:white;padding:20rpx;text-align:center;font-size:36rpx;" bindtap="onTestRedeem">测试兑换点击</view>
   <view class="coin-header card">
     <view class="coin-balance flex-row">
       <text class="coin-big-icon">🪙</text>
@@ -31,7 +30,7 @@
       <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'photo' && item.mediaUrl}}"><image class="reward-image" src="{{item.mediaUrl}}" mode="widthFix" bindtap="previewRewardImage" data-url="{{item.mediaUrl}}"></image></view>
       <view class="reward-bottom mt-md">
         <view class="text-sm text-secondary mb-sm">剩余 {{item.stock - (item.redeemed || 0)}} / {{item.stock}}</view>
-        <view style="background:#FF8C42;color:white;padding:20rpx;text-align:center;border-radius:16rpx;font-size:32rpx;font-weight:600;" bindtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">{{userCoins >= item.coinsNeeded ? '兑换' : '金币不足'}}</view>
+        <view class="redeem-btn {{userCoins >= item.coinsNeeded && item.stock > (item.redeemed || 0) ? '' : 'disabled'}}" bindtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">{{userCoins >= item.coinsNeeded ? '兑换' : '金币不足'}}</view>
       </view>
       <view class="admin-actions flex-row mt-sm" wx:if="{{isAdmin}}">
         <text class="admin-btn" bindtap="editReward" data-index="{{index}}">编辑</text>
