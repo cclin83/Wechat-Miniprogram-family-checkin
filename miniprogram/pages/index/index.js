@@ -6,7 +6,7 @@ Page({
     familyId: null, familyName: '', members: [], totalStepsFormatted: '0',
     openid: null, todayCoins: 0, totalCoins: 0,
     feedList: [], feedPage: 0, hasMore: true, loading: false,
-    showCommentInput: false, commentText: '', commentFeedId: null, commentFeedIndex: null
+    largeText: wx.getStorageSync("largeText") || false, showCommentInput: false, commentText: '', commentFeedId: null, commentFeedIndex: null
   },
   async onLoad() {
     try {
@@ -27,6 +27,7 @@ Page({
     } catch (err) { console.error('首页加载失败:', err) }
   },
   async onShow() {
+    this.setData({ largeText: wx.getStorageSync("largeText") || false })
     if (this.data.familyId) {
       await this.loadFamilyData()
       this.setData({ feedPage: 0, feedList: [], hasMore: true })

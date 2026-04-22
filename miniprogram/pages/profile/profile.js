@@ -6,7 +6,7 @@ Page({
     openid: null, userInfo: null, role: null, familyId: null, isAdmin: false,
     totalCheckins: 0, totalCoins: 0, totalStepsFormatted: '0', streak: 0,
     familyName: '', inviteCode: '', memberCount: 0, members: [],
-    showMembersModal: false, showInviteModal: false, largeText: false
+    showMembersModal: false, showInviteModal: false, largeText: wx.getStorageSync("largeText") || false
   },
   async onLoad(options) {
     const openid = await app.getOpenid()
@@ -17,7 +17,8 @@ Page({
     if (options.action === 'create') this.createFamily()
     else if (options.action === 'join') this.joinFamily()
   },
-  async onShow() { await this.loadUserData() },
+  async onShow() {
+    this.setData({ largeText: wx.getStorageSync("largeText") || false }) await this.loadUserData() },
   async loadUserData() {
     try {
       const user = await dbUtil.getUserByOpenid(this.data.openid)
@@ -83,6 +84,6 @@ Page({
   copyInviteCode() { wx.setClipboardData({ data: this.data.inviteCode, success: () => { wx.showToast({ title: '已复制', icon: 'success' }); this.setData({ showInviteModal: false }) } }) },
   showMembers() { this.setData({ showMembersModal: true }) },
   hideMembersModal() { this.setData({ showMembersModal: false }) },
-  toggleLargeText() { const v = !this.data.largeText; this.setData({ largeText: v }); wx.setStorageSync('largeText', v); wx.showToast({ title: v ? '已开启大字模式' : '已关闭大字模式', icon: 'none' }) },
+  toggleLargeText() { const v = !this.data.largeText; this.setData({ largeText: v }); wx.setStorageSync('largeText', v); app.globalData.largeText = v; wx.showToast({ title: v ? '已开启大字模式' : '已关闭大字模式', icon: 'none' }) },
   showAbout() { wx.showModal({ title: '亲情健步', content: '用运动连接家人的爱\n\n版本 1.0.0', showCancel: false, confirmText: '知道了' }) }
 })

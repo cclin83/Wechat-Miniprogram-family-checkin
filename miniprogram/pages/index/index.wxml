@@ -1,4 +1,4 @@
-<view class="page-index">
+<view class="page-index {{largeText ? "large-text" : ""}}">
   <view class="welcome-card card" wx:if="{{!familyId}}">
     <view class="welcome-emoji">👨‍👩‍👧‍👦</view>
     <view class="welcome-title">欢迎来到亲情健步</view>

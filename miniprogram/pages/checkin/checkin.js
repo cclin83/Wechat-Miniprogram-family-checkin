@@ -3,6 +3,7 @@ const dbUtil = require('../../utils/db')
 const util = require('../../utils/util')
 Page({
   data: {
+    largeText: wx.getStorageSync("largeText") || false,
     steps: 0, stepsFormatted: '0', syncing: false, lastSyncTime: '',
     alreadyChecked: false, checking: false,
     selectedMood: '', postContent: '', postImages: [], moodTags: util.MOOD_TAGS,
@@ -17,7 +18,8 @@ Page({
     await this.loadTodayData()
     await this.loadCalendar()
   },
-  async onShow() { if (this.data.openid) await this.loadTodayData() },
+  async onShow() {
+    this.setData({ largeText: wx.getStorageSync("largeText") || false }) if (this.data.openid) await this.loadTodayData() },
   async loadTodayData() {
     try {
       const checkin = await dbUtil.getTodayCheckin(this.data.openid)

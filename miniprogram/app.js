@@ -14,7 +14,8 @@ App({
       userInfo: null,
       familyId: null,
       role: null,
-      openid: null
+      openid: null,
+      largeText: wx.getStorageSync('largeText') || false
     }
   },
   getUserProfile() {

@@ -3,6 +3,7 @@ const dbUtil = require('../../utils/db')
 const util = require('../../utils/util')
 Page({
   data: {
+    largeText: wx.getStorageSync("largeText") || false,
     openid: null, userCoins: 0, isAdmin: false, familyId: null, rewards: [], redeemHistory: [],
     showModal: false, editingReward: null, formName: '', formDesc: '', formCoins: '', formType: 'photo', formTextContent: '', formMediaUrl: '', formStock: '1', saving: false,
     showRedeemSuccess: false, redeemedReward: {}
@@ -13,6 +14,7 @@ Page({
     if (user) { this.setData({ openid, userCoins: user.coins||0, isAdmin: user.role==='admin', familyId: user.familyId }); await this.loadRewards() }
   },
   async onShow() {
+    this.setData({ largeText: wx.getStorageSync("largeText") || false })
     if (this.data.openid) { const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); await this.loadRewards() }
   },
   async onPullDownRefresh() { await this.loadRewards(); const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); wx.stopPullDownRefresh() },
