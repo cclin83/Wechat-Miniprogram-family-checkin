@@ -1,4 +1,4 @@
-<view class="page-profile {{largeText ? "large-text" : ""}}">
+<view class="page-profile {{largeText ? 'large-text' : ''}}">
   <view class="user-card card">
     <view class="flex-row" wx:if="{{userInfo}}">
       <image class="avatar-large" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
