@@ -3,7 +3,7 @@ App({
     try {
       if (wx.cloud) {
         wx.cloud.init({
-          env: 'your-env-id',
+          env: 'cloud1-d1g0ayrh448486ce1',
           traceUser: true
         })
       }
