@@ -24,7 +24,7 @@ Page({
     await this.loadCalendar()
   },
   async onShow() {
-    this.setData({ largeText: wx.getStorageSync("largeText") || false }); if (this.data.openid) await this.loadTodayData() },
+    var cached = wx.getStorageSync("todaySteps"); if (cached && cached.date === util.todayKey() && this.data.steps === 0) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }); this.drawStepsRing() } this.setData({ largeText: wx.getStorageSync("largeText") || false }); if (this.data.openid) await this.loadTodayData() },
   async loadTodayData() {
     try {
       const checkin = await dbUtil.getTodayCheckin(this.data.openid)
