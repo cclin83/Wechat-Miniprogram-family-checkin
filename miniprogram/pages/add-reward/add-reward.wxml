@@ -24,6 +24,20 @@
     </view>
   </view>
 
+  <view class="form-group" wx:if="{{formType === 'voice'}}">
+    <text class="form-label">录制语音</text>
+    <view class="voice-area">
+      <view class="voice-btn {{recording ? 'recording' : ''}}" bindtouchstart="startRecord" bindtouchend="stopRecord">
+        <text class="voice-icon">{{recording ? '🔴' : '🎤'}}</text>
+        <text class="voice-tip">{{recording ? '录音中...松开结束' : '按住录音'}}</text>
+      </view>
+      <view class="voice-preview" wx:if="{{formMediaUrl}}">
+        <text>✅ 语音已录制</text>
+        <view class="voice-play-btn" bindtap="playVoice">▶️ 播放</view>
+      </view>
+    </view>
+  </view>
+
   <view class="form-group" wx:if="{{formType === 'text'}}">
     <text class="form-label">文字内容</text>
     <textarea class="form-textarea" placeholder="写一段鼓励的话..." value="{{formTextContent}}" bindinput="onInput" data-field="formTextContent"></textarea>

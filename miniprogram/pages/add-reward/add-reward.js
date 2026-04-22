@@ -12,7 +12,9 @@ Page({
     formTextContent: '',
     formMediaUrl: '',
     formStock: '1',
-    saving: false
+    saving: false,
+    recording: false,
+    recorderManager: null
   },
 
   onLoad(options) {
@@ -55,6 +57,46 @@ Page({
         }
       })
     }
+  },
+
+  startRecord() {
+    var that = this
+    var recorderManager = wx.getRecorderManager()
+    this.recorderManager = recorderManager
+    recorderManager.onStop(function(res) {
+      wx.showLoading({ title: '上传中...' })
+      var filePath = res.tempFilePath
+      var cloudPath = 'rewards/' + Date.now() + '-' + Math.random().toString(36).substr(2, 8) + '.mp3'
+      wx.cloud.uploadFile({
+        cloudPath: cloudPath,
+        filePath: filePath,
+        success: function(uploadRes) {
+          that.setData({ formMediaUrl: uploadRes.fileID })
+          wx.hideLoading()
+          wx.showToast({ title: '录制成功', icon: 'success' })
+        },
+        fail: function() {
+          wx.hideLoading()
+          wx.showToast({ title: '上传失败', icon: 'none' })
+        }
+      })
+    })
+    recorderManager.start({ format: 'mp3', duration: 60000 })
+    this.setData({ recording: true })
+  },
+
+  stopRecord() {
+    if (this.recorderManager) {
+      this.recorderManager.stop()
+    }
+    this.setData({ recording: false })
+  },
+
+  playVoice() {
+    if (!this.data.formMediaUrl) return
+    var innerAudioContext = wx.createInnerAudioContext()
+    innerAudioContext.src = this.data.formMediaUrl
+    innerAudioContext.play()
   },
 
   async saveReward() {
