@@ -6,7 +6,7 @@ Page({
     familyId: null, familyName: '', members: [], totalStepsFormatted: '0',
     openid: null, todayCoins: 0, totalCoins: 0,
     feedList: [], feedPage: 0, hasMore: true, loading: false,
-    largeText: wx.getStorageSync("largeText") || false, showCommentInput: false, commentText: '', commentFeedId: null, commentFeedIndex: null
+    largeText: wx.getStorageSync("largeText") || false, showCommentInput: false, replyTo: "", commentText: '', commentFeedId: null, commentFeedIndex: null
   },
   async onLoad() {
     try {
@@ -93,16 +93,20 @@ Page({
   },
   onComment(e) {
     const { id, index } = e.currentTarget.dataset
-    this.setData({ showCommentInput: true, commentFeedId: id, commentFeedIndex: index, commentText: '' })
+    this.setData({ showCommentInput: true, commentFeedId: id, commentFeedIndex: index, commentText: '', replyTo: '' })
   },
-  hideCommentInput() { this.setData({ showCommentInput: false }) },
+  onReply(e) {
+    const { feedId, feedIndex, replyName } = e.currentTarget.dataset
+    this.setData({ showCommentInput: true, commentFeedId: feedId, commentFeedIndex: feedIndex, commentText: "", replyTo: replyName })
+  },
+  hideCommentInput() { this.setData({ showCommentInput: false, replyTo: "" }) },
   onCommentInput(e) { this.setData({ commentText: e.detail.value }) },
   async submitComment() {
     const { commentText, commentFeedId, commentFeedIndex, openid } = this.data
     if (!commentText.trim()) return
     try {
       const userInfo = app.globalData.userInfo || {}
-      const comment = { openid, nickName: userInfo.nickName||'家人', avatarUrl: userInfo.avatarUrl||'', content: commentText.trim() }
+      const comment = { openid, nickName: userInfo.nickName||'家人', avatarUrl: userInfo.avatarUrl||'', content: commentText.trim(), replyTo: this.data.replyTo || '' }
       await db.commentFeed(commentFeedId, comment)
       const feed = this.data.feedList[commentFeedIndex]
       feed.comments.push({...comment, createdAt: Date.now()})
