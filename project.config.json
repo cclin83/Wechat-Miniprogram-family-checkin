@@ -1,8 +1,8 @@
-﻿{
+{
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": true,
     "enhance": true,
     "postcss": true,
@@ -21,7 +21,7 @@
       "outputPath": ""
     }
   },
-  "appid": "wx_YOUR_APPID",
+  "appid": "wx403801cb7a992190",
   "projectname": "family-checkin",
   "libVersion": "2.25.4",
   "condition": {}
