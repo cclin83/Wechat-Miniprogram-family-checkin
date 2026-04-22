@@ -1,7 +1,7 @@
 .page-add-reward { padding: 32rpx; min-height: 100vh; box-sizing: border-box; background: var(--bg); }
 .form-group { margin-bottom: 32rpx; }
 .form-label { font-size: 28rpx; font-weight: 600; margin-bottom: 12rpx; display: block; color: var(--text-primary); }
-.form-input { background: #FFF; border-radius: 16rpx; padding: 24rpx; font-size: 32rpx; width: 100%; box-sizing: border-box; border: 2rpx solid var(--border); }
+.form-input { background: #FFF; border-radius: 16rpx; padding: 24rpx; font-size: 32rpx; width: 100%; box-sizing: border-box; border: 2rpx solid var(--border); height: 88rpx; line-height: 40rpx; }
 .form-textarea { background: #FFF; border-radius: 16rpx; padding: 24rpx; font-size: 32rpx; width: 100%; min-height: 160rpx; box-sizing: border-box; border: 2rpx solid var(--border); }
 .type-options { gap: 16rpx; flex-wrap: wrap; display: flex; }
 .type-option { font-size: 26rpx; padding: 16rpx 28rpx; background: #FFF; border-radius: 24rpx; border: 2rpx solid var(--border); }
