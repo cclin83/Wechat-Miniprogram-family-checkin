@@ -6,7 +6,7 @@ Page({
     openid: null, userInfo: null, role: null, familyId: null, isAdmin: false,
     totalCheckins: 0, totalCoins: 0, totalStepsFormatted: '0', streak: 0,
     familyName: '', inviteCode: '', memberCount: 0, members: [],
-    showMembersModal: false, showInviteModal: false, largeText: wx.getStorageSync("largeText") || false
+    showMembersModal: false, showInviteModal: false, isCreator: false, largeText: wx.getStorageSync("largeText") || false
   },
   async onLoad(options) {
     const openid = await app.getOpenid()
@@ -32,7 +32,7 @@ Page({
     try {
       const family = await dbUtil.getFamily(this.data.familyId)
       const members = await dbUtil.getFamilyMembers(this.data.familyId)
-      this.setData({ familyName: family.name, inviteCode: family.inviteCode, memberCount: members.length, members })
+      this.setData({ familyName: family.name, inviteCode: family.inviteCode, memberCount: members.length, members, isCreator: family.adminOpenid === this.data.openid })
     } catch (err) { console.error('加载家庭数据失败:', err) }
   },
   async getUserProfile() {
@@ -87,6 +87,10 @@ Page({
   switchRole() {
     var that = this
     var isAdmin = this.data.isAdmin
+    if (!isAdmin && !this.data.isCreator) {
+      wx.showToast({ title: '只有家庭创建者可以切换为管理员', icon: 'none' })
+      return
+    }
     var title = isAdmin ? '切换为成员' : '切换为管理员'
     var content = isAdmin ? '切换后你将无法管理奖品。确定吗？' : '切换后你可以管理奖品。确定吗？'
     var newRole = isAdmin ? 'member' : 'admin'
