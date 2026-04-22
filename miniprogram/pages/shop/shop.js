@@ -17,7 +17,7 @@ Page({
   },
   async onShow() {
     this.setData({ largeText: wx.getStorageSync("largeText") || false })
-    if (this.data.openid) { const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); await this.loadRewards() }
+    if (this.data.openid) { const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0, isAdmin: user.role==='admin' }); await this.loadRewards() }
   },
   async onPullDownRefresh() { await this.loadRewards(); const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); wx.stopPullDownRefresh() },
   async loadRewards() { if (!this.data.familyId) return; try { this.setData({ rewards: await dbUtil.getRewardList(this.data.familyId) }) } catch(e) { console.error('加载奖品失败:',e) } },
