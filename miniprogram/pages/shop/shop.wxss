@@ -14,6 +14,7 @@
 .redeem-btn { background: var(--primary); color: #FFF; font-size: 30rpx; padding: 20rpx; text-align: center; border-radius: 16rpx; font-weight: 600; }
 .redeem-btn:active { opacity: 0.85; }
 .redeem-btn.disabled { background: var(--text-light); opacity: 0.6; }
+.redeem-btn.redeemed { background: #FFF3E8; color: var(--primary); }
 .admin-actions { gap: 24rpx; padding-top: 12rpx; }
 .admin-btn { font-size: 24rpx; color: var(--text-secondary); padding: 4rpx 12rpx; } .admin-btn.danger { color: #FF4757; }
 .modal-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; }

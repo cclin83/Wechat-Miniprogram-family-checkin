@@ -64,6 +64,25 @@ Page({
       }
     })
   },
+  viewReward(e) {
+    var that = this
+    var index = parseInt(e.currentTarget.dataset.index)
+    var reward = this.data.rewards[index]
+    if (!reward) return
+    // 如果有云文件ID，先转临时URL
+    if (reward.mediaUrl && reward.mediaUrl.indexOf('cloud://') === 0) {
+      wx.cloud.getTempFileURL({ fileList: [reward.mediaUrl] }).then(function(res) {
+        var fileInfo = res.fileList && res.fileList[0]
+        var showReward = JSON.parse(JSON.stringify(reward))
+        if (fileInfo && fileInfo.tempFileURL) {
+          showReward.mediaUrl = fileInfo.tempFileURL
+        }
+        that.setData({ showRedeemSuccess: true, redeemedReward: showReward })
+      })
+    } else {
+      that.setData({ showRedeemSuccess: true, redeemedReward: reward })
+    }
+  },
   hideRedeemSuccess() { this.setData({ showRedeemSuccess: false, redeemedReward: {} }) },
   showAddReward() { wx.navigateTo({ url: '/pages/add-reward/add-reward?familyId=' + this.data.familyId + '&openid=' + this.data.openid }) },
   editReward(e) { const r = this.data.rewards[e.currentTarget.dataset.index]; this.setData({ showModal: true, editingReward: r, formName: r.name, formDesc: r.description||'', formCoins: String(r.coinsNeeded), formType: r.type, formTextContent: r.textContent||'', formMediaUrl: r.mediaUrl||'', formStock: String(r.stock) }) },

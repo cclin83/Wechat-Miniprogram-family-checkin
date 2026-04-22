@@ -30,7 +30,9 @@
       <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'photo' && item.mediaUrl}}"><image class="reward-image" src="{{item.mediaUrl}}" mode="widthFix" bindtap="previewRewardImage" data-url="{{item.mediaUrl}}"></image></view>
       <view class="reward-bottom mt-md">
         <view class="text-sm text-secondary mb-sm">剩余 {{item.stock - (item.redeemed || 0)}} / {{item.stock}}</view>
-        <view class="redeem-btn {{userCoins >= item.coinsNeeded && item.stock > (item.redeemed || 0) ? '' : 'disabled'}}" bindtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">{{userCoins >= item.coinsNeeded ? '兑换' : '金币不足'}}</view>
+        <view wx:if="{{(item.redeemed || 0) >= item.stock}}" class="redeem-btn redeemed" bindtap="viewReward" data-index="{{index}}">查看奖品</view>
+        <view wx:elif="{{userCoins >= item.coinsNeeded}}" class="redeem-btn" bindtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">兑换</view>
+        <view wx:else class="redeem-btn disabled">金币不足</view>
       </view>
       <view class="admin-actions flex-row mt-sm" wx:if="{{isAdmin}}">
         <text class="admin-btn" bindtap="editReward" data-index="{{index}}">编辑</text>
