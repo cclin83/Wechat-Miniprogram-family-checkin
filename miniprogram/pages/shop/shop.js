@@ -72,5 +72,22 @@ Page({
       success: async (res) => { if (!res.confirm) return; try { await dbUtil.collections.rewards.doc(id).update({ data: { active: false } }); wx.showToast({ title: '已删除', icon: 'success' }); await this.loadRewards() } catch(e) { wx.showToast({ title: '删除失败', icon: 'none' }) } }
     })
   },
+  playRewardVoice(e) {
+    var url = e.currentTarget.dataset.url
+    if (!url) return
+    var audio = wx.createInnerAudioContext()
+    audio.src = url
+    audio.play()
+    wx.showToast({ title: '播放中...', icon: 'none' })
+  },
+  previewRewardImage(e) {
+    wx.previewImage({ urls: [e.currentTarget.dataset.url] })
+  },
+  playRedeemVoice() {
+    if (!this.data.redeemedReward || !this.data.redeemedReward.mediaUrl) return
+    var audio = wx.createInnerAudioContext()
+    audio.src = this.data.redeemedReward.mediaUrl
+    audio.play()
+  },
   preventBubble() {}
 })
