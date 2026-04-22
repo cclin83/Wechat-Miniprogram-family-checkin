@@ -18,7 +18,7 @@
 .modal-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; }
 .modal-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #FFF; border-radius: 32rpx 32rpx 0 0; z-index: 201; max-height: 85vh; overflow-y: scroll; -webkit-overflow-scrolling: touch; transform: translateY(100%); transition: transform 0.3s ease; }
 .modal-panel.show { transform: translateY(0); }
-.modal-header { padding: 32rpx 32rpx 16rpx; position: sticky; top: 0; background: #FFF; border-radius: 32rpx 32rpx 0 0; }
+.modal-header { padding: 32rpx 32rpx 16rpx; background: #FFF; border-radius: 32rpx 32rpx 0 0; z-index: 1; }
 .modal-close { font-size: 36rpx; color: var(--text-secondary); padding: 8rpx; }
 .modal-body { padding: 16rpx 32rpx; }
 .modal-footer { padding: 24rpx 32rpx; padding-bottom: calc(24rpx + env(safe-area-inset-bottom)); }
