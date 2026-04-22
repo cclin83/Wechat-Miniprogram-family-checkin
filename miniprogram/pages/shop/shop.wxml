@@ -25,6 +25,9 @@
         <view class="flex-1 ml-sm"><view class="reward-name text-bold">{{item.name}}</view><view class="reward-desc text-sm text-secondary">{{item.description}}</view></view>
         <view class="reward-price"><text class="price-num">{{item.coinsNeeded}}</text><text class="price-unit">币</text></view>
       </view>
+      <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'voice'}}" catchtap="playRewardVoice" data-url="{{item.mediaUrl}}"><text class="preview-btn">▶️ 试听</text></view>
+      <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'video' && item.mediaUrl}}"><video class="reward-video" src="{{item.mediaUrl}}" controls></video></view>
+      <view class="reward-preview mt-sm" wx:if="{{isAdmin && item.type === 'photo' && item.mediaUrl}}"><image class="reward-image" src="{{item.mediaUrl}}" mode="widthFix" catchtap="previewRewardImage" data-url="{{item.mediaUrl}}"></image></view>
       <view class="reward-bottom flex-between mt-md">
         <view class="text-sm text-secondary">剩余 {{item.stock - item.redeemed}} / {{item.stock}}</view>
         <button class="redeem-btn {{userCoins >= item.coinsNeeded && item.stock > item.redeemed ? '' : 'disabled'}}" catchtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">{{userCoins >= item.coinsNeeded ? '兑换' : '金币不足'}}</button>
