@@ -24,13 +24,13 @@ Page({
     await this.loadCalendar()
   },
   async onShow() {
-    var cached = wx.getStorageSync("todaySteps"); if (cached && cached.date === util.todayKey() && this.data.steps === 0) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }); this.drawStepsRing() } this.setData({ largeText: wx.getStorageSync("largeText") || false }); if (this.data.openid) await this.loadTodayData() },
+    this.setData({ largeText: wx.getStorageSync("largeText") || false }); var cached = wx.getStorageSync("todaySteps"); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }); this.drawStepsRing() } if (this.data.openid) await this.loadTodayData() },
   async loadTodayData() {
     try {
       const checkin = await dbUtil.getTodayCheckin(this.data.openid)
       if (checkin) { this.setData({ steps: checkin.steps, stepsFormatted: util.formatSteps(checkin.steps), alreadyChecked: true, selectedMood: checkin.mood||'', postContent: checkin.content||'', postImages: checkin.images||[] }) } else { var cached = wx.getStorageSync('todaySteps'); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }) } }
       this.drawStepsRing()
-    } catch (err) { console.error('加载今日数据失败:', err) }
+    } catch (err) { console.error('加载今日数据失败:', err); var cached = wx.getStorageSync('todaySteps'); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }); this.drawStepsRing() } }
   },
   syncSteps() {
     if (this.data.syncing) return
