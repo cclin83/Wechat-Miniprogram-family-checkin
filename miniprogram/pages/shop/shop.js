@@ -40,7 +40,7 @@ Page({
     })
   },
   hideRedeemSuccess() { this.setData({ showRedeemSuccess: false, redeemedReward: {} }) },
-  showAddReward() { this.setData({ showModal: true, editingReward: null, formName: '', formDesc: '', formCoins: '', formType: 'photo', formTextContent: '', formMediaUrl: '', formStock: '1' }) },
+  showAddReward() { wx.navigateTo({ url: '/pages/add-reward/add-reward?familyId=' + this.data.familyId + '&openid=' + this.data.openid }) },
   editReward(e) { const r = this.data.rewards[e.currentTarget.dataset.index]; this.setData({ showModal: true, editingReward: r, formName: r.name, formDesc: r.description||'', formCoins: String(r.coinsNeeded), formType: r.type, formTextContent: r.textContent||'', formMediaUrl: r.mediaUrl||'', formStock: String(r.stock) }) },
   hideModal() { this.setData({ showModal: false }) },
   onFormInput(e) { this.setData({ [e.currentTarget.dataset.field]: e.detail.value }) },

@@ -1,0 +1,14 @@
+.page-add-reward { padding: 32rpx; min-height: 100vh; box-sizing: border-box; background: var(--bg); }
+.form-group { margin-bottom: 32rpx; }
+.form-label { font-size: 28rpx; font-weight: 600; margin-bottom: 12rpx; display: block; color: var(--text-primary); }
+.form-input { background: #FFF; border-radius: 16rpx; padding: 24rpx; font-size: 32rpx; width: 100%; box-sizing: border-box; border: 2rpx solid var(--border); }
+.form-textarea { background: #FFF; border-radius: 16rpx; padding: 24rpx; font-size: 32rpx; width: 100%; min-height: 160rpx; box-sizing: border-box; border: 2rpx solid var(--border); }
+.type-options { gap: 16rpx; flex-wrap: wrap; display: flex; }
+.type-option { font-size: 26rpx; padding: 16rpx 28rpx; background: #FFF; border-radius: 24rpx; border: 2rpx solid var(--border); }
+.type-option.selected { background: #FFF3E8; border-color: var(--primary); color: var(--primary); }
+.upload-area { width: 240rpx; height: 240rpx; border: 2rpx dashed var(--border); border-radius: 16rpx; overflow: hidden; background: #FFF; }
+.upload-preview { width: 100%; height: 100%; }
+.upload-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8rpx; color: var(--text-secondary); }
+.upload-icon { font-size: 56rpx; color: var(--text-light); }
+.upload-text { font-size: 24rpx; }
+.form-footer { padding: 32rpx 0; padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); }

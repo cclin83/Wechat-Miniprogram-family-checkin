@@ -3,7 +3,8 @@
     "pages/index/index",
     "pages/checkin/checkin",
     "pages/shop/shop",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/add-reward/add-reward"
   ],
   "window": {
     "backgroundTextStyle": "light",

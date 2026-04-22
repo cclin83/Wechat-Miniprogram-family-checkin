@@ -1,0 +1,51 @@
+<view class="page-add-reward">
+  <view class="form-group">
+    <text class="form-label">奖品名称</text>
+    <input class="form-input" placeholder="例如：宝宝的一张照片" value="{{formName}}" bindinput="onInput" data-field="formName"/>
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">描述（可选）</text>
+    <input class="form-input" placeholder="简单描述一下这个奖品" value="{{formDesc}}" bindinput="onInput" data-field="formDesc"/>
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">所需金币</text>
+    <input class="form-input" type="number" placeholder="例如：30" value="{{formCoins}}" bindinput="onInput" data-field="formCoins"/>
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">奖品类型</text>
+    <view class="type-options flex-row">
+      <view class="type-option {{formType === 'photo' ? 'selected' : ''}}" bindtap="selectType" data-type="photo">📸 照片</view>
+      <view class="type-option {{formType === 'voice' ? 'selected' : ''}}" bindtap="selectType" data-type="voice">🎤 语音</view>
+      <view class="type-option {{formType === 'text' ? 'selected' : ''}}" bindtap="selectType" data-type="text">💌 文字</view>
+      <view class="type-option {{formType === 'video' ? 'selected' : ''}}" bindtap="selectType" data-type="video">🎬 视频</view>
+    </view>
+  </view>
+
+  <view class="form-group" wx:if="{{formType === 'text'}}">
+    <text class="form-label">文字内容</text>
+    <textarea class="form-textarea" placeholder="写一段鼓励的话..." value="{{formTextContent}}" bindinput="onInput" data-field="formTextContent"></textarea>
+  </view>
+
+  <view class="form-group" wx:if="{{formType === 'photo' || formType === 'video'}}">
+    <text class="form-label">上传{{formType === 'photo' ? '照片' : '视频'}}</text>
+    <view class="upload-area" bindtap="uploadMedia">
+      <image wx:if="{{formMediaUrl}}" class="upload-preview" src="{{formMediaUrl}}" mode="aspectFill"></image>
+      <view wx:else class="upload-placeholder">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">点击上传</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <text class="form-label">可兑换次数</text>
+    <input class="form-input" type="number" placeholder="例如：1" value="{{formStock}}" bindinput="onInput" data-field="formStock"/>
+  </view>
+
+  <view class="form-footer">
+    <button class="btn-primary" bindtap="saveReward" loading="{{saving}}">{{saving ? '保存中...' : '保存'}}</button>
+  </view>
+</view>
