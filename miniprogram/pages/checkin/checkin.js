@@ -28,7 +28,7 @@ Page({
   async loadTodayData() {
     try {
       const checkin = await dbUtil.getTodayCheckin(this.data.openid)
-      if (checkin) this.setData({ steps: checkin.steps, stepsFormatted: util.formatSteps(checkin.steps), alreadyChecked: true, selectedMood: checkin.mood||'', postContent: checkin.content||'', postImages: checkin.images||[] })
+      if (checkin) { this.setData({ steps: checkin.steps, stepsFormatted: util.formatSteps(checkin.steps), alreadyChecked: true, selectedMood: checkin.mood||'', postContent: checkin.content||'', postImages: checkin.images||[] }) } else { var cached = wx.getStorageSync('todaySteps'); if (cached && cached.date === util.todayKey()) { this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) }) } }
       this.drawStepsRing()
     } catch (err) { console.error('加载今日数据失败:', err) }
   },
