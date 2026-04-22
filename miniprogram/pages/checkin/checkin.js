@@ -30,26 +30,42 @@ Page({
   syncSteps() {
     if (this.data.syncing) return
     this.setData({ syncing: true })
+    var that = this
     wx.getWeRunData({
-      success: async (res) => {
-        try {
-          const result = await wx.cloud.callFunction({ name: 'syncSteps', data: { encryptedData: res.encryptedData, iv: res.iv } })
-          const stepData = result.result
-          if (stepData && stepData.stepInfoList) {
-            const todayData = stepData.stepInfoList[stepData.stepInfoList.length - 1]
-            const steps = todayData ? todayData.step : 0
-            const coins = util.calcCoins(steps)
-            this.setData({ steps, stepsFormatted: util.formatSteps(steps), lastSyncTime: util.formatTime(new Date()), syncing: false })
-            this.drawStepsRing()
-            if (coins > 0) wx.showToast({ title: `${steps}步，可获${coins}枚币`, icon: 'none', duration: 2000 })
+      success: function(res) {
+        wx.cloud.callFunction({
+          name: 'syncSteps',
+          data: {
+            weRunData: wx.cloud.CloudID(res.cloudID)
+          },
+          success: function(callRes) {
+            var stepData = callRes.result
+            if (stepData && stepData.stepInfoList) {
+              var todayData = stepData.stepInfoList[stepData.stepInfoList.length - 1]
+              var steps = todayData ? todayData.step : 0
+              var coins = util.calcCoins(steps)
+              that.setData({ steps: steps, stepsFormatted: util.formatSteps(steps), lastSyncTime: util.formatTime(new Date()), syncing: false })
+              that.drawStepsRing()
+              if (coins > 0) wx.showToast({ title: steps + '步，可获' + coins + '枚币', icon: 'none', duration: 2000 })
+            } else {
+              that.setData({ syncing: false })
+              wx.showToast({ title: '同步失败', icon: 'none' })
+            }
+          },
+          fail: function(err) {
+            console.error('同步步数失败:', err)
+            that.setData({ syncing: false })
+            wx.showToast({ title: '同步失败，请重试', icon: 'none' })
           }
-        } catch (err) { console.error('解密步数失败:', err); this.setData({ syncing: false }); wx.showToast({ title: '同步失败，请重试', icon: 'none' }) }
+        })
       },
-      fail: (err) => {
-        this.setData({ syncing: false })
-        if (err.errMsg.includes('authorize')) {
-          wx.showModal({ title: '需要授权', content: '请允许获取微信运动数据', confirmText: '去授权', success: (r) => { if (r.confirm) wx.openSetting() } })
-        } else wx.showToast({ title: '获取步数失败', icon: 'none' })
+      fail: function(err) {
+        that.setData({ syncing: false })
+        if (err.errMsg && err.errMsg.indexOf('authorize') >= 0) {
+          wx.showModal({ title: '需要授权', content: '请允许获取微信运动数据', confirmText: '去授权', success: function(r) { if (r.confirm) wx.openSetting() } })
+        } else {
+          wx.showToast({ title: '获取步数失败', icon: 'none' })
+        }
       }
     })
   },
