@@ -84,7 +84,7 @@ Page({
   deleteImage(e) { const imgs = [...this.data.postImages]; imgs.splice(e.currentTarget.dataset.index, 1); this.setData({ postImages: imgs }) },
   async doCheckin() {
     if (this.data.checking) return
-    if (this.data.steps < 3000) { wx.showToast({ title: '还没走够3000步哦', icon: 'none' }); return }
+    // 不限制步数，随时可以打卡
     if (!this.data.familyId) { wx.showToast({ title: '请先加入家庭', icon: 'none' }); return }
     this.setData({ checking: true })
     try {
