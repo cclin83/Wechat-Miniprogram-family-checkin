@@ -21,7 +21,7 @@
     <button class="btn-primary mt-lg sync-btn" bindtap="syncSteps" loading="{{syncing}}">{{syncing ? '同步中...' : '同步微信运动步数'}}</button>
     <view class="text-sm text-secondary text-center mt-sm" wx:if="{{lastSyncTime}}">上次同步：{{lastSyncTime}}</view>
   </view>
-  <view class="checkin-post card" wx:if="{{steps >= 3000}}">
+  <view class="checkin-post card">
     <view class="post-header flex-between"><text class="text-bold">记录今天的散步</text><text class="text-sm text-secondary">可选</text></view>
     <view class="mood-tags flex-row mt-md">
       <view class="mood-item {{selectedMood === item.emoji + ' ' + item.text ? 'selected' : ''}}" wx:for="{{moodTags}}" wx:key="text" bindtap="selectMood" data-mood="{{item.emoji}} {{item.text}}">
