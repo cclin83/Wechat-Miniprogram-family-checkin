@@ -12,6 +12,11 @@ Page({
     openid: null, familyId: null
   },
   async onLoad() {
+    var cached = wx.getStorageSync("todaySteps")
+    if (cached && cached.date === util.todayKey()) {
+      this.setData({ steps: cached.steps, stepsFormatted: util.formatSteps(cached.steps) })
+      this.drawStepsRing()
+    }
     const openid = await app.getOpenid()
     const user = await dbUtil.getUserByOpenid(openid)
     this.setData({ openid, familyId: user ? user.familyId : null })
@@ -44,7 +49,7 @@ Page({
               var todayData = stepData.stepInfoList[stepData.stepInfoList.length - 1]
               var steps = todayData ? todayData.step : 0
               var coins = util.calcCoins(steps)
-              that.setData({ steps: steps, stepsFormatted: util.formatSteps(steps), lastSyncTime: util.formatTime(new Date()), syncing: false })
+              that.setData({ steps: steps, stepsFormatted: util.formatSteps(steps), lastSyncTime: util.formatTime(new Date()), syncing: false }); wx.setStorageSync('todaySteps', { steps: steps, date: util.todayKey() })
               that.drawStepsRing()
               if (coins > 0) wx.showToast({ title: steps + '步，可获' + coins + '枚币', icon: 'none', duration: 2000 })
             } else {
