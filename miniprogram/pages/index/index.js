@@ -111,6 +111,6 @@ Page({
   },
   previewImage(e) { const { urls, current } = e.currentTarget.dataset; wx.previewImage({ urls, current }) },
   onMemberTap(e) { wx.showToast({ title: '查看成员详情', icon: 'none' }) },
-  goCreateFamily() { wx.navigateTo({ url: '/pages/profile/profile?action=create' }) },
-  goJoinFamily() { wx.navigateTo({ url: '/pages/profile/profile?action=join' }) }
+  goCreateFamily() { wx.switchTab({ url: '/pages/profile/profile' }) },
+  goJoinFamily() { wx.switchTab({ url: '/pages/profile/profile' }) }
 })
