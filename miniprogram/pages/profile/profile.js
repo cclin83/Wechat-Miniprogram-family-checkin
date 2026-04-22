@@ -86,19 +86,23 @@ Page({
   hideMembersModal() { this.setData({ showMembersModal: false }) },
   switchRole() {
     var that = this
+    var isAdmin = this.data.isAdmin
+    var title = isAdmin ? '切换为成员' : '切换为管理员'
+    var content = isAdmin ? '切换后你将无法管理奖品。确定吗？' : '切换后你可以管理奖品。确定吗？'
+    var newRole = isAdmin ? 'member' : 'admin'
     wx.showModal({
-      title: '切换角色',
-      content: '切换为普通成员后，你将无法管理奖品。确定吗？',
+      title: title,
+      content: content,
       confirmText: '确定',
       confirmColor: '#FF8C42',
       success: async function(res) {
         if (!res.confirm) return
         try {
           var user = await dbUtil.getUserByOpenid(that.data.openid)
-          await dbUtil.updateUser(user._id, { role: 'member' })
-          app.globalData.role = 'member'
-          that.setData({ role: 'member', isAdmin: false })
-          wx.showToast({ title: '已切换为成员', icon: 'success' })
+          await dbUtil.updateUser(user._id, { role: newRole })
+          app.globalData.role = newRole
+          that.setData({ role: newRole, isAdmin: newRole === 'admin' })
+          wx.showToast({ title: '已切换', icon: 'success' })
         } catch(e) {
           console.error('切换角色失败:', e)
           wx.showToast({ title: '切换失败', icon: 'none' })
@@ -107,5 +111,5 @@ Page({
     })
   },
   toggleLargeText() { const v = !this.data.largeText; this.setData({ largeText: v }); wx.setStorageSync('largeText', v); app.globalData.largeText = v; wx.showToast({ title: v ? '已开启大字模式' : '已关闭大字模式', icon: 'none' }) },
-  showAbout() { wx.showModal({ title: '亲情健步', content: '用运动连接家人的爱\n\n版本 1.0.0', showCancel: false, confirmText: '知道了' }) }
+  showAbout() { wx.showModal({ title: '亲情健步', content: '运动连接家人的爱\n让我们一起变得更健康更快乐\n\n1.0版本正式上线', showCancel: false, confirmText: '知道了' }) }
 })
