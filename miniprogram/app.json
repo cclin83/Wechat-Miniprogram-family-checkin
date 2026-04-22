@@ -18,13 +18,32 @@
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [
-      {"pagePath": "pages/index/index", "text": "家庭", "iconPath": "images/tab-home.png", "selectedIconPath": "images/tab-home-active.png"},
-      {"pagePath": "pages/checkin/checkin", "text": "打卡", "iconPath": "images/tab-checkin.png", "selectedIconPath": "images/tab-checkin-active.png"},
-      {"pagePath": "pages/shop/shop", "text": "兑换", "iconPath": "images/tab-shop.png", "selectedIconPath": "images/tab-shop-active.png"},
-      {"pagePath": "pages/profile/profile", "text": "我的", "iconPath": "images/tab-profile.png", "selectedIconPath": "images/tab-profile-active.png"}
+      {
+        "pagePath": "pages/index/index",
+        "text": "家庭",
+        "iconPath": "images/tab-home.png",
+        "selectedIconPath": "images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/checkin/checkin",
+        "text": "打卡",
+        "iconPath": "images/tab-checkin.png",
+        "selectedIconPath": "images/tab-checkin-active.png"
+      },
+      {
+        "pagePath": "pages/shop/shop",
+        "text": "兑换",
+        "iconPath": "images/tab-shop.png",
+        "selectedIconPath": "images/tab-shop-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tab-profile.png",
+        "selectedIconPath": "images/tab-profile-active.png"
+      }
     ]
   },
-  "cloud": true,
-  "sitemapLocation": "sitemap.json",
-  "style": "v2"
+  "cloud": false,
+  "sitemapLocation": "sitemap.json"
 }
