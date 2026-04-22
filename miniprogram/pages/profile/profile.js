@@ -84,6 +84,28 @@ Page({
   copyInviteCode() { wx.setClipboardData({ data: this.data.inviteCode, success: () => { wx.showToast({ title: '已复制', icon: 'success' }); this.setData({ showInviteModal: false }) } }) },
   showMembers() { this.setData({ showMembersModal: true }) },
   hideMembersModal() { this.setData({ showMembersModal: false }) },
+  switchRole() {
+    var that = this
+    wx.showModal({
+      title: '切换角色',
+      content: '切换为普通成员后，你将无法管理奖品。确定吗？',
+      confirmText: '确定',
+      confirmColor: '#FF8C42',
+      success: async function(res) {
+        if (!res.confirm) return
+        try {
+          var user = await dbUtil.getUserByOpenid(that.data.openid)
+          await dbUtil.updateUser(user._id, { role: 'member' })
+          app.globalData.role = 'member'
+          that.setData({ role: 'member', isAdmin: false })
+          wx.showToast({ title: '已切换为成员', icon: 'success' })
+        } catch(e) {
+          console.error('切换角色失败:', e)
+          wx.showToast({ title: '切换失败', icon: 'none' })
+        }
+      }
+    })
+  },
   toggleLargeText() { const v = !this.data.largeText; this.setData({ largeText: v }); wx.setStorageSync('largeText', v); app.globalData.largeText = v; wx.showToast({ title: v ? '已开启大字模式' : '已关闭大字模式', icon: 'none' }) },
   showAbout() { wx.showModal({ title: '亲情健步', content: '用运动连接家人的爱\n\n版本 1.0.0', showCancel: false, confirmText: '知道了' }) }
 })

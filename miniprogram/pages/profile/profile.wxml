@@ -39,6 +39,7 @@
   <view class="section-block">
     <view class="section-header text-bold">设置</view>
     <view class="menu-card card">
+      <view class="menu-item flex-between" bindtap="switchRole" wx:if="{{isAdmin}}"><view class="flex-row"><text class="menu-icon">🔄</text><text class="ml-sm">切换为普通成员</text></view><text class="menu-arrow">›</text></view>
       <view class="menu-item flex-between"><view class="flex-row"><text class="menu-icon">🔤</text><text class="ml-sm">大字模式</text></view><switch checked="{{largeText}}" color="#FF8C42" bindchange="toggleLargeText"/></view>
       <view class="menu-item flex-between" bindtap="showAbout"><view class="flex-row"><text class="menu-icon">ℹ️</text><text class="ml-sm">关于</text></view><text class="menu-arrow">›</text></view>
     </view>
