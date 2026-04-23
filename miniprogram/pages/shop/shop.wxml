@@ -31,8 +31,11 @@
             <view class="text-sm text-secondary">{{item.nickName}} · {{item.status === 'fulfilled' ? '已实现' : '等待实现'}}</view>
           </view>
         </view>
-        <view wx:if="{{item.status === 'fulfilled' && item.fulfilledPhoto}}" class="wish-photo mt-sm" bindtap="viewWishPhoto" data-index="{{index}}">
-          <text class="text-sm text-primary">查看实现照片</text>
+        <view wx:if="{{item.status === 'fulfilled'}}" class="wish-fulfilled-info mt-sm">
+          <text class="text-sm text-secondary">{{item.fulfilledNickName || '家人'}} 实现了这个心愿</text>
+          <view wx:if="{{item.fulfilledPhoto}}" class="wish-photo-link" bindtap="viewWishPhoto" data-index="{{index}}">
+            <text class="text-sm text-primary">查看照片</text>
+          </view>
         </view>
         <view wx:if="{{item.status === 'pending' && item.openid !== openid}}" class="wish-fulfill-actions flex-row mt-sm">
           <view class="wish-fulfill-btn flex-1" bindtap="fulfillWish" data-index="{{index}}">拍照实现</view>
