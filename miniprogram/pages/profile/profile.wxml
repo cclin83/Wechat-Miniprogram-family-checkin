@@ -59,8 +59,9 @@
         <view class="setup-avatar-hint">点击选头像</view>
       </button>
     </view>
-    <view class="profile-setup-name mt-lg" bindtap="editNickname">
-      <view class="setup-nickname-display">{{userInfo.nickName || '点击设置昵称'}}</view>
+    <view class="profile-setup-name-btn mt-lg" bindtap="editNickname">
+      <text class="setup-name-icon">✏️</text>
+      <text class="setup-name-text">{{userInfo.nickName && userInfo.nickName !== '家人' ? userInfo.nickName : '点击设置昵称'}}</text>
     </view>
     <view class="profile-setup-btn mt-lg" bindtap="skipProfileSetup">完成</view>
   </view>

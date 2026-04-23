@@ -29,5 +29,7 @@
 .avatar-btn-large::after { display: none; }
 .setup-avatar-img { width: 160rpx; height: 160rpx; border-radius: 50%; border: 4rpx dashed var(--border); }
 .setup-avatar-hint { font-size: 24rpx; color: var(--text-secondary); margin-top: 8rpx; }
-.setup-nickname-display { background: var(--bg); border-radius: 16rpx; padding: 24rpx; font-size: 34rpx; text-align: center; color: var(--primary); }
+.profile-setup-name-btn { display: flex; align-items: center; justify-content: center; gap: 12rpx; background: var(--bg); border-radius: 16rpx; padding: 28rpx; }
+.setup-name-icon { font-size: 32rpx; }
+.setup-name-text { font-size: 34rpx; color: var(--primary); font-weight: 600; }
 .profile-setup-btn { background: var(--primary); color: #FFF; font-size: 32rpx; padding: 24rpx; text-align: center; border-radius: 16rpx; font-weight: 600; }
