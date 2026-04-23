@@ -12,17 +12,14 @@
       <text class="text-bold">心愿卡</text>
       <text class="text-sm text-secondary">{{wishCost}}币/张</text>
     </view>
-    <view class="wish-price-bar flex-between card" wx:if="{{isAdmin}}">
-      <view><view class="text-bold">心愿管理</view><view class="text-sm text-secondary">查看家人的心愿</view></view>
-      <view class="wish-price-btn" bindtap="showWishPriceSetting">设置价格</view>
-    </view>
-    <view wx:if="{{!isAdmin}}" class="wish-make-card card" bindtap="showWishModal">
+    <view class="wish-make-card card" bindtap="showWishModal">
       <view class="wish-make-inner flex-row">
         <text class="wish-make-icon">🌟</text>
-        <view class="ml-sm">
+        <view class="ml-sm flex-1">
           <view class="text-bold">许个心愿</view>
           <view class="text-sm text-secondary">花{{wishCost}}币许下一个心愿</view>
         </view>
+        <view class="wish-price-btn" wx:if="{{isAdmin}}" catchtap="showWishPriceSetting">设置价格</view>
       </view>
     </view>
     <view wx:if="{{wishes.length > 0}}">
@@ -37,7 +34,8 @@
         <view wx:if="{{item.status === 'fulfilled' && item.fulfilledPhoto}}" class="wish-photo mt-sm" bindtap="viewWishPhoto" data-index="{{index}}">
           <text class="text-sm text-primary">查看实现照片</text>
         </view>
-        <view wx:if="{{isAdmin && item.status === 'pending'}}" class="wish-fulfill-btn mt-sm" bindtap="fulfillWish" data-index="{{index}}">拍照实现心愿</view>
+        <view wx:if="{{item.status === 'pending' && item.openid !== openid}}" class="wish-fulfill-btn mt-sm" bindtap="fulfillWish" data-index="{{index}}">拍照实现心愿</view>
+        <view wx:if="{{item.status === 'pending' && item.openid === openid}}" class="text-sm text-secondary mt-sm">等待家人实现...</view>
       </view>
     </view>
     <view class="empty-hint text-sm text-secondary" wx:if="{{wishes.length === 0}}">还没有心愿卡</view>
