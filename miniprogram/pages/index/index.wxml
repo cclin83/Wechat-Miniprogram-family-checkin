@@ -44,7 +44,7 @@
         <text class="text-sm text-secondary" wx:if="{{showAllRanking}}" bindtap="toggleRanking">收起</text>
       </view>
       <view class="ranking-list">
-        <view class="ranking-item flex-row {{index === 0 ? 'ranking-first' : ''}}" wx:for="{{showAllRanking ? ranking : ranking.slice(0, 3)}}" wx:key="openid">
+        <view class="ranking-item flex-row {{index === 0 ? 'ranking-first' : ''}}" wx:for="{{ranking}}" wx:key="openid" wx:if="{{showAllRanking || index < 3}}">
           <view class="ranking-pos">
             <text wx:if="{{index === 0}}" class="ranking-medal">🥇</text>
             <text wx:elif="{{index === 1}}" class="ranking-medal">🥈</text>
