@@ -80,15 +80,17 @@ Page({
   },
   drawStepsRing() {
     const ctx = wx.createCanvasContext('steps-ring', this)
-    const s=180, r=160, lw=20, progress=util.calcProgress(this.data.steps,8000), angle=(progress/100)*2*Math.PI
-    ctx.beginPath(); ctx.arc(s,s,r,0,2*Math.PI); ctx.setStrokeStyle('#F0E8E0'); ctx.setLineWidth(lw); ctx.setLineCap('round'); ctx.stroke()
+    const s=180, r=160, lw=16, progress=util.calcProgress(this.data.steps,8000), angle=(progress/100)*2*Math.PI
+    // 背景环
+    ctx.beginPath(); ctx.arc(s,s,r,0,2*Math.PI); ctx.setStrokeStyle('#F0E8E0'); ctx.setLineWidth(lw); ctx.setLineCap('butt'); ctx.stroke()
     if (progress > 0) {
+      var color = '#FFB380'
+      if (this.data.steps>=8000) color = '#4CAF50'
+      else if (this.data.steps>=5000) color = '#8BC34A'
+      else if (this.data.steps>=3000) color = '#FF8C42'
+      // 进度弧线
       ctx.beginPath(); ctx.arc(s,s,r,-Math.PI/2,-Math.PI/2+angle)
-      if (this.data.steps>=8000) ctx.setStrokeStyle('#4CAF50')
-      else if (this.data.steps>=5000) ctx.setStrokeStyle('#8BC34A')
-      else if (this.data.steps>=3000) ctx.setStrokeStyle('#FF8C42')
-      else ctx.setStrokeStyle('#FFB380')
-      ctx.setLineWidth(lw); ctx.setLineCap('round'); ctx.stroke()
+      ctx.setStrokeStyle(color); ctx.setLineWidth(lw); ctx.setLineCap('round'); ctx.stroke()
     }
     ctx.draw()
   },
