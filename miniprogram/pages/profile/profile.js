@@ -3,7 +3,7 @@ const dbUtil = require('../../utils/db')
 const util = require('../../utils/util')
 Page({
   data: {
-    openid: null, userInfo: null, role: null, familyId: null, isAdmin: false,
+    openid: null, userInfo: { nickName: '', avatarUrl: '' }, role: null, familyId: null, isAdmin: false,
     totalCheckins: 0, totalCoins: 0, totalStepsFormatted: '0', streak: 0,
     familyName: '', inviteCode: '', memberCount: 0, members: [],
     showMembersModal: false, showInviteModal: false, isCreator: false, largeText: wx.getStorageSync("largeText") || false
@@ -38,6 +38,49 @@ Page({
   async getUserProfile() {
     try { const userInfo = await app.getUserProfile(); this.setData({ userInfo }); await dbUtil.getOrCreateUser(this.data.openid, userInfo); await this.loadUserData() }
     catch (err) { console.error('获取用户信息失败:', err) }
+  },
+  onChooseAvatar(e) {
+    var that = this
+    var avatarUrl = e.detail.avatarUrl
+    if (!avatarUrl) return
+    // 上传头像到云存储
+    wx.showLoading({ title: '上传中...' })
+    wx.cloud.uploadFile({
+      cloudPath: 'avatars/' + that.data.openid + '/' + Date.now() + '.jpg',
+      filePath: avatarUrl
+    }).then(function(res) {
+      var cloudUrl = res.fileID
+      var userInfo = that.data.userInfo || {}
+      userInfo.avatarUrl = cloudUrl
+      that.setData({ userInfo: userInfo })
+      app.globalData.userInfo = userInfo
+      wx.setStorageSync('userInfo', userInfo)
+      // 更新数据库
+      return dbUtil.collections.users.where({ openid: that.data.openid }).update({ data: { avatarUrl: cloudUrl } })
+    }).then(function() {
+      wx.hideLoading()
+      wx.showToast({ title: '头像已更新', icon: 'success' })
+    }).catch(function(err) {
+      wx.hideLoading()
+      console.error('上传头像失败:', err)
+      wx.showToast({ title: '上传失败', icon: 'none' })
+    })
+  },
+  onNicknameBlur(e) {
+    var nickName = (e.detail.value || '').trim()
+    if (!nickName) return
+    var that = this
+    var userInfo = this.data.userInfo || {}
+    if (nickName === userInfo.nickName) return
+    userInfo.nickName = nickName
+    this.setData({ userInfo: userInfo })
+    app.globalData.userInfo = userInfo
+    wx.setStorageSync('userInfo', userInfo)
+    dbUtil.collections.users.where({ openid: this.data.openid }).update({ data: { nickName: nickName } }).then(function() {
+      wx.showToast({ title: '昵称已更新', icon: 'success' })
+    }).catch(function(err) {
+      console.error('更新昵称失败:', err)
+    })
   },
   createFamily() {
     wx.showModal({ title: '创建家庭', content: '', editable: true, placeholderText: '给家庭起个名字', confirmText: '创建', confirmColor: '#FF8C42',

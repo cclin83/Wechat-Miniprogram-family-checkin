@@ -1,13 +1,15 @@
 <view class="page-profile {{largeText ? 'large-text' : ''}}">
   <view class="user-card card">
-    <view class="flex-row" wx:if="{{userInfo}}">
-      <image class="avatar-large" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+    <view class="flex-row">
+      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar-large" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      </button>
       <view class="user-info ml-sm flex-1">
-        <view class="user-name text-bold text-lg">{{userInfo.nickName || '未设置昵称'}}</view>
+        <input class="nickname-input text-bold text-lg" type="nickname" placeholder="点击设置昵称" value="{{userInfo.nickName}}" bindblur="onNicknameBlur" bindconfirm="onNicknameBlur"/>
         <view class="user-role text-sm mt-sm"><text class="role-badge role-{{role}}">{{role === 'admin' ? '管理员' : '成员'}}</text></view>
       </view>
     </view>
-    <button class="btn-secondary mt-md" wx:if="{{!userInfo}}" bindtap="getUserProfile">点击登录</button>
+    <view class="text-sm text-secondary mt-sm" wx:if="{{!userInfo.nickName || userInfo.nickName === '家人'}}">点击头像和昵称设置个人信息</view>
   </view>
   <view class="stats-card card" wx:if="{{familyId}}">
     <view class="stats-row flex-between">
