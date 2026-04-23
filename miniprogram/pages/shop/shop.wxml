@@ -34,7 +34,10 @@
         <view wx:if="{{item.status === 'fulfilled' && item.fulfilledPhoto}}" class="wish-photo mt-sm" bindtap="viewWishPhoto" data-index="{{index}}">
           <text class="text-sm text-primary">查看实现照片</text>
         </view>
-        <view wx:if="{{item.status === 'pending' && item.openid !== openid}}" class="wish-fulfill-btn mt-sm" bindtap="fulfillWish" data-index="{{index}}">拍照实现心愿</view>
+        <view wx:if="{{item.status === 'pending' && item.openid !== openid}}" class="wish-fulfill-actions flex-row mt-sm">
+          <view class="wish-fulfill-btn flex-1" bindtap="fulfillWish" data-index="{{index}}">拍照实现</view>
+          <view class="wish-fulfill-btn-text flex-1" bindtap="fulfillWishDirect" data-index="{{index}}">直接标记完成</view>
+        </view>
         <view wx:if="{{item.status === 'pending' && item.openid === openid}}" class="text-sm text-secondary mt-sm">等待家人实现...</view>
       </view>
     </view>

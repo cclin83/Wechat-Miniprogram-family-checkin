@@ -273,6 +273,38 @@ Page({
       }
     })
   },
+  fulfillWishDirect(e) {
+    var that = this
+    var index = parseInt(e.currentTarget.dataset.index)
+    var wish = this.data.wishes[index]
+    if (!wish) return
+    wx.showModal({
+      title: '确认实现',
+      content: '确定已经实现了心愿「' + wish.content + '」？',
+      confirmText: '确认',
+      confirmColor: '#4CAF50',
+      success: function(res) {
+        if (!res.confirm) return
+        var userInfo = app.globalData.userInfo || {}
+        dbUtil.fulfillWish(wish._id, {
+          openid: that.data.openid, nickName: userInfo.nickName || '家人', photoUrl: ''
+        }).then(function() {
+          return dbUtil.postFeed({
+            familyId: that.data.familyId, openid: that.data.openid,
+            nickName: userInfo.nickName || '家人', avatarUrl: userInfo.avatarUrl || '',
+            type: 'wish_fulfilled', content: '实现了心愿：' + wish.content,
+            steps: 0, coins: 0
+          })
+        }).then(function() {
+          wx.showToast({ title: '心愿已实现', icon: 'success' })
+          return that.loadWishes()
+        }).catch(function(err) {
+          console.error('实现心愿失败:', err)
+          wx.showToast({ title: '操作失败', icon: 'none' })
+        })
+      }
+    })
+  },
   viewWishPhoto(e) {
     var index = parseInt(e.currentTarget.dataset.index)
     var wish = this.data.wishes[index]
