@@ -74,20 +74,31 @@ Page({
       wx.showToast({ title: '上传失败', icon: 'none' })
     })
   },
-  onNicknameBlur(e) {
-    var nickName = (e.detail.value || '').trim()
-    if (!nickName) return
+  editNickname() {
     var that = this
-    var userInfo = this.data.userInfo || {}
-    if (nickName === userInfo.nickName) return
-    userInfo.nickName = nickName
-    this.setData({ userInfo: userInfo })
-    app.globalData.userInfo = userInfo
-    wx.setStorageSync('userInfo', userInfo)
-    dbUtil.collections.users.where({ openid: this.data.openid }).update({ data: { nickName: nickName } }).then(function() {
-      wx.showToast({ title: '昵称已更新', icon: 'success' })
-    }).catch(function(err) {
-      console.error('更新昵称失败:', err)
+    var currentName = (this.data.userInfo && this.data.userInfo.nickName) || ''
+    wx.showModal({
+      title: '设置昵称',
+      content: '',
+      editable: true,
+      placeholderText: '输入你的昵称',
+      confirmText: '保存',
+      confirmColor: '#FF8C42',
+      success: function(res) {
+        if (!res.confirm) return
+        var nickName = (res.content || '').trim()
+        if (!nickName || nickName === currentName) return
+        var userInfo = that.data.userInfo || {}
+        userInfo.nickName = nickName
+        that.setData({ userInfo: userInfo })
+        app.globalData.userInfo = userInfo
+        wx.setStorageSync('userInfo', userInfo)
+        dbUtil.collections.users.where({ openid: that.data.openid }).update({ data: { nickName: nickName } }).then(function() {
+          wx.showToast({ title: '昵称已更新', icon: 'success' })
+        }).catch(function(err) {
+          console.error('更新昵称失败:', err)
+        })
+      }
     })
   },
   createFamily() {

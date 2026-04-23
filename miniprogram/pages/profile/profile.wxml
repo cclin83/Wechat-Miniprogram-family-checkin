@@ -5,7 +5,7 @@
         <image class="avatar-large" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
       </button>
       <view class="user-info ml-sm flex-1">
-        <input class="nickname-input text-bold text-lg" type="nickname" placeholder="点击设置昵称" value="{{userInfo.nickName}}" bindblur="onNicknameBlur" bindconfirm="onNicknameBlur"/>
+        <view class="user-name text-bold text-lg" bindtap="editNickname">{{userInfo.nickName || '点击设置昵称'}}</view>
         <view class="user-role text-sm mt-sm"><text class="role-badge role-{{role}}">{{role === 'admin' ? '管理员' : '成员'}}</text></view>
       </view>
     </view>
@@ -59,8 +59,8 @@
         <view class="setup-avatar-hint">点击选头像</view>
       </button>
     </view>
-    <view class="profile-setup-name mt-lg">
-      <input class="setup-nickname-input" type="nickname" placeholder="点击输入昵称" value="{{userInfo.nickName}}" bindblur="onNicknameBlur" bindconfirm="onNicknameBlur"/>
+    <view class="profile-setup-name mt-lg" bindtap="editNickname">
+      <view class="setup-nickname-display">{{userInfo.nickName || '点击设置昵称'}}</view>
     </view>
     <view class="profile-setup-btn mt-lg" bindtap="skipProfileSetup">完成</view>
   </view>
