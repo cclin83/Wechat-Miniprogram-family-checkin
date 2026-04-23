@@ -6,7 +6,8 @@ Page({
     openid: null, userInfo: { nickName: '', avatarUrl: '' }, role: null, familyId: null, isAdmin: false,
     totalCheckins: 0, totalCoins: 0, totalStepsFormatted: '0', streak: 0,
     familyName: '', inviteCode: '', memberCount: 0, members: [],
-    showMembersModal: false, showInviteModal: false, isCreator: false, largeText: wx.getStorageSync("largeText") || false
+    showMembersModal: false, showInviteModal: false, isCreator: false, largeText: wx.getStorageSync("largeText") || false,
+    showProfileSetup: false
   },
   async onLoad(options) {
     const openid = await app.getOpenid()
@@ -38,6 +39,13 @@ Page({
   async getUserProfile() {
     try { const userInfo = await app.getUserProfile(); this.setData({ userInfo }); await dbUtil.getOrCreateUser(this.data.openid, userInfo); await this.loadUserData() }
     catch (err) { console.error('获取用户信息失败:', err) }
+  },
+  skipProfileSetup() {
+    this.setData({ showProfileSetup: false })
+    // 创建家庭后还需要显示邀请码
+    if (this.data.isCreator && this.data.familyId) {
+      setTimeout(() => { this.setData({ showInviteModal: true }) }, 300)
+    }
   },
   onChooseAvatar(e) {
     var that = this
@@ -96,7 +104,13 @@ Page({
           this.setData({ familyId: family._id, role: 'admin', isAdmin: true })
           wx.hideLoading(); wx.showToast({ title: '创建成功', icon: 'success' })
           await this.loadFamilyData()
-          setTimeout(() => { this.setData({ showInviteModal: true }) }, 1500)
+          // 如果没设置过昵称，先弹引导再弹邀请码
+          var ui = this.data.userInfo || {}
+          if (!ui.nickName || ui.nickName === '家人' || !ui.avatarUrl) {
+            setTimeout(() => { this.setData({ showProfileSetup: true }) }, 1500)
+          } else {
+            setTimeout(() => { this.setData({ showInviteModal: true }) }, 1500)
+          }
         } catch (err) { wx.hideLoading(); wx.showToast({ title: '创建失败', icon: 'none' }) }
       }
     })
@@ -117,6 +131,11 @@ Page({
           this.setData({ familyId: family._id, role: 'member', isAdmin: false })
           wx.hideLoading(); wx.showToast({ title: '加入成功', icon: 'success' })
           await this.loadFamilyData()
+          // 如果没设置过昵称，弹出引导
+          var ui = this.data.userInfo || {}
+          if (!ui.nickName || ui.nickName === '家人' || !ui.avatarUrl) {
+            setTimeout(() => { this.setData({ showProfileSetup: true }) }, 1500)
+          }
         } catch (err) { wx.hideLoading(); wx.showToast({ title: err.message||'加入失败', icon: 'none' }) }
       }
     })

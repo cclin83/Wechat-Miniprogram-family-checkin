@@ -46,6 +46,25 @@
       <view class="menu-item flex-between" bindtap="showAbout"><view class="flex-row"><text class="menu-icon">ℹ️</text><text class="ml-sm">关于</text></view><text class="menu-arrow">›</text></view>
     </view>
   </view>
+  <!-- 设置个人信息引导弹窗 -->
+  <view class="modal-mask" wx:if="{{showProfileSetup}}" catchtap="skipProfileSetup"></view>
+  <view class="profile-setup-panel" wx:if="{{showProfileSetup}}">
+    <view class="text-center">
+      <view class="text-lg text-bold">设置个人信息</view>
+      <view class="text-sm text-secondary mt-sm">让家人认识你</view>
+    </view>
+    <view class="profile-setup-avatar mt-lg">
+      <button class="avatar-btn-large" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="setup-avatar-img" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="setup-avatar-hint">点击选头像</view>
+      </button>
+    </view>
+    <view class="profile-setup-name mt-lg">
+      <input class="setup-nickname-input" type="nickname" placeholder="点击输入昵称" value="{{userInfo.nickName}}" bindblur="onNicknameBlur" bindconfirm="onNicknameBlur"/>
+    </view>
+    <view class="profile-setup-btn mt-lg" bindtap="skipProfileSetup">完成</view>
+  </view>
+
   <view class="modal-mask" wx:if="{{showMembersModal}}" bindtap="hideMembersModal"></view>
   <view class="modal-panel {{showMembersModal ? 'show' : ''}}">
     <view class="modal-header flex-between"><text class="text-bold text-lg">家庭成员</text><text class="modal-close" bindtap="hideMembersModal">✕</text></view>
