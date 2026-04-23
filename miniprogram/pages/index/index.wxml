@@ -37,7 +37,7 @@
       <view class="coin-badge">+{{todayCoins}}</view>
     </view>
     <!-- 家庭排行榜 -->
-    <view class="ranking-card card" wx:if="{{ranking.length > 0}}">
+    <view class="ranking-card card" wx:if="{{ranking.length > 0 || familyId}}">
       <view class="section-title flex-between mb-md">
         <text class="text-bold">今日排行榜</text>
         <text class="text-sm text-secondary" wx:if="{{ranking.length > 3 && !showAllRanking}}" bindtap="toggleRanking">展开</text>

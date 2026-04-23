@@ -118,8 +118,10 @@ async function getTodayRanking(familyId) {
   var today = util.todayKey()
   // 获取家庭所有成员
   var members = await getFamilyMembers(familyId)
-  // 获取今日所有打卡记录
-  var checkinRes = await collections.checkins.where({ familyId: familyId, date: today }).get()
+  if (!members || members.length === 0) return []
+  // 用成员openid列表查询今日打卡，不依赖checkins的familyId字段
+  var openids = members.map(function(m) { return m.openid })
+  var checkinRes = await collections.checkins.where({ openid: _.in(openids), date: today }).get()
   var checkinMap = {}
   checkinRes.data.forEach(function(c) { checkinMap[c.openid] = c.steps || 0 })
   // 组装排行榜
