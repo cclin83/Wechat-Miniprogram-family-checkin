@@ -12,11 +12,8 @@
     <view class="family-overview card">
       <view class="family-name">{{familyName}}</view>
       <view class="members-steps flex-row">
-        <view class="member-ring" wx:for="{{members}}" wx:key="openid" bindtap="onMemberTap" data-openid="{{item.openid}}">
-          <view class="ring-wrapper">
-            <canvas canvas-id="ring-{{index}}" id="ring-{{index}}" class="ring-canvas"></canvas>
-            <image class="member-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
-          </view>
+        <view class="member-item" wx:for="{{members}}" wx:key="openid" bindtap="onMemberTap" data-openid="{{item.openid}}">
+          <image class="member-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
           <view class="member-name">{{item.nickName}}</view>
           <view class="member-steps-num">{{item.todayStepsFormatted}}</view>
         </view>

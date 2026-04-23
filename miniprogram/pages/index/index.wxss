@@ -7,10 +7,8 @@
 .family-overview { padding: 32rpx; }
 .family-name { font-size: 36rpx; font-weight: 700; margin-bottom: 28rpx; text-align: center; }
 .members-steps { justify-content: center; gap: 40rpx; flex-wrap: wrap; }
-.member-ring { display: flex; flex-direction: column; align-items: center; min-width: 120rpx; }
-.ring-wrapper { position: relative; width: 120rpx; height: 120rpx; }
-.ring-canvas { width: 120rpx; height: 120rpx; position: absolute; top: 0; left: 0; }
-.member-avatar { width: 80rpx; height: 80rpx; border-radius: 50%; position: absolute; top: 20rpx; left: 20rpx; }
+.member-item { display: flex; flex-direction: column; align-items: center; min-width: 120rpx; }
+.member-avatar { width: 80rpx; height: 80rpx; border-radius: 50%; }
 .member-name { font-size: 24rpx; color: var(--text-secondary); margin-top: 8rpx; max-width: 120rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .member-steps-num { font-size: 22rpx; color: var(--primary); font-weight: 600; }
 .family-total { padding-top: 20rpx; border-top: 1rpx solid var(--border); }

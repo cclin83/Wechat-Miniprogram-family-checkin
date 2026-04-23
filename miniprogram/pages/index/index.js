@@ -63,20 +63,9 @@ Page({
       })
       ranking.sort(function(a, b) { return b.steps - a.steps })
       this.setData({ familyName: family.name, members, totalStepsFormatted: util.formatSteps(totalSteps), ranking: ranking })
-      setTimeout(() => { members.forEach((member, index) => { this.drawProgressRing(index, member.todaySteps) }) }, 300)
     } catch (err) { console.error('加载家庭数据失败:', err) }
   },
-  drawProgressRing(index, steps) {
-    const ctx = wx.createCanvasContext(`ring-${index}`, this)
-    const c = 60, r = 55, lw = 8, progress = util.calcProgress(steps, 3000), angle = (progress/100)*2*Math.PI
-    ctx.beginPath(); ctx.arc(c,c,r,0,2*Math.PI); ctx.setStrokeStyle('#F0E8E0'); ctx.setLineWidth(lw); ctx.setLineCap('round'); ctx.stroke()
-    if (progress > 0) {
-      ctx.beginPath(); ctx.arc(c,c,r,-Math.PI/2,-Math.PI/2+angle)
-      ctx.setStrokeStyle(progress >= 100 ? '#4CAF50' : progress >= 60 ? '#FF8C42' : '#FFB380')
-      ctx.setLineWidth(lw); ctx.setLineCap('round'); ctx.stroke()
-    }
-    ctx.draw()
-  },
+
   async loadFeed() {
     if (this.data.loading || !this.data.hasMore) return
     this.setData({ loading: true })
