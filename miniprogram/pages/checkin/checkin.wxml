@@ -1,10 +1,10 @@
 <view class="page-checkin {{largeText ? 'large-text' : ''}}">
   <view class="steps-hero card">
-    <view class="steps-ring-big">
-      <canvas canvas-id="steps-ring" class="steps-ring-canvas"></canvas>
-      <view class="steps-center">
-        <view class="steps-number">{{stepsFormatted}}</view>
-        <view class="steps-label">步</view>
+    <view class="steps-display">
+      <view class="steps-number">{{stepsFormatted}}</view>
+      <view class="steps-label">步</view>
+      <view class="steps-progress-bar mt-md">
+        <view class="steps-progress-fill" style="width: {{steps >= 8000 ? 100 : (steps / 8000 * 100)}}%"></view>
       </view>
     </view>
     <view class="steps-targets flex-between mt-md">
