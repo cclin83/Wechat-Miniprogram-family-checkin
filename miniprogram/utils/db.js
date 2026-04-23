@@ -6,7 +6,8 @@ try {
   _ = db.command
   collections = {
     users: db.collection('users'), families: db.collection('families'),
-    checkins: db.collection('checkins'), rewards: db.collection('rewards'), feeds: db.collection('feeds')
+    checkins: db.collection('checkins'), rewards: db.collection('rewards'), feeds: db.collection('feeds'),
+    wishes: db.collection('wishes')
   }
 } catch (e) {
   console.log('cloud database not available', e)
@@ -94,4 +95,39 @@ async function redeemReward(rewardId, openid, userCoins) {
   await collections.rewards.doc(rewardId).update({ data: { redeemed: _.inc(1) } })
   return r
 }
-module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward }
+// === 心愿卡 ===
+async function createWish(data) {
+  // 扣币
+  await collections.users.where({ openid: data.openid }).update({ data: { coins: _.inc(-data.cost) } })
+  var wish = { familyId: data.familyId, openid: data.openid, nickName: data.nickName, avatarUrl: data.avatarUrl, content: data.content, cost: data.cost, status: 'pending', fulfilledBy: '', fulfilledNickName: '', fulfilledPhoto: '', fulfilledAt: null, createdAt: db.serverDate() }
+  var res = await collections.wishes.add({ data: wish })
+  wish._id = res._id
+  return wish
+}
+async function getWishList(familyId) {
+  var res = await collections.wishes.where({ familyId }).orderBy('createdAt', 'desc').limit(50).get()
+  return res.data
+}
+async function fulfillWish(wishId, data) {
+  return collections.wishes.doc(wishId).update({ data: { status: 'fulfilled', fulfilledBy: data.openid, fulfilledNickName: data.nickName, fulfilledPhoto: data.photoUrl || '', fulfilledAt: db.serverDate() } })
+}
+
+// === 家庭排行榜 ===
+async function getTodayRanking(familyId) {
+  var util = require('./util')
+  var today = util.todayKey()
+  // 获取家庭所有成员
+  var members = await getFamilyMembers(familyId)
+  // 获取今日所有打卡记录
+  var checkinRes = await collections.checkins.where({ familyId: familyId, date: today }).get()
+  var checkinMap = {}
+  checkinRes.data.forEach(function(c) { checkinMap[c.openid] = c.steps || 0 })
+  // 组装排行榜
+  var ranking = members.map(function(m) {
+    return { openid: m.openid, nickName: m.nickName || '家人', avatarUrl: m.avatarUrl || '', steps: checkinMap[m.openid] || 0 }
+  })
+  ranking.sort(function(a, b) { return b.steps - a.steps })
+  return ranking
+}
+
+module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward, createWish, getWishList, fulfillWish, getTodayRanking }

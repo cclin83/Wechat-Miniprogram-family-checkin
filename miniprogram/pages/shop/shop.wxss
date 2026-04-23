@@ -48,3 +48,29 @@
 .reward-video { width: 100%; height: 300rpx; border-radius: 12rpx; }
 .success-voice-btn { font-size: 36rpx; color: var(--primary); padding: 24rpx 48rpx; background: #FFF3E8; border-radius: 32rpx; text-align: center; }
 .success-video { width: 100%; height: 400rpx; border-radius: 16rpx; }
+
+/* 心愿卡 */
+.wish-section { margin-top: 16rpx; margin-bottom: 16rpx; }
+.wish-price-bar { padding: 24rpx 32rpx; }
+.wish-price-btn { font-size: 26rpx; color: var(--primary); padding: 8rpx 24rpx; background: #FFF3E8; border-radius: 24rpx; }
+.wish-make-card { padding: 32rpx; }
+.wish-make-inner { display: flex; flex-direction: row; align-items: center; }
+.wish-make-icon { font-size: 48rpx; }
+.wish-card { padding: 24rpx 32rpx; }
+.wish-card.wish-pending { border-left: 6rpx solid #FFB380; }
+.wish-card.wish-fulfilled { border-left: 6rpx solid var(--success); }
+.wish-card-top { align-items: flex-start; }
+.wish-status-icon { font-size: 36rpx; margin-top: 4rpx; }
+.wish-photo { padding: 8rpx 0; }
+.wish-fulfill-btn { background: var(--success); color: #FFF; font-size: 28rpx; padding: 16rpx; text-align: center; border-radius: 12rpx; font-weight: 600; }
+.wish-fulfill-btn:active { opacity: 0.85; }
+.empty-hint { text-align: center; padding: 24rpx; }
+
+/* 许心愿弹窗 */
+.wish-modal-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #FFF; border-radius: 32rpx 32rpx 0 0; z-index: 201; max-height: 85vh; }
+.wish-modal-body { padding: 16rpx 32rpx 0; }
+.wish-template-list { display: flex; flex-wrap: wrap; gap: 16rpx; margin-bottom: 24rpx; }
+.wish-template-item { font-size: 28rpx; padding: 16rpx 28rpx; background: var(--bg); border-radius: 32rpx; border: 2rpx solid transparent; }
+.wish-template-item.selected { background: #FFF3E8; border-color: var(--primary); color: var(--primary); }
+.wish-input { width: 100%; min-height: 100rpx; background: var(--bg); border-radius: 16rpx; padding: 20rpx 24rpx; font-size: 30rpx; box-sizing: border-box; }
+.wish-cost-info { padding: 16rpx 0; }

@@ -5,6 +5,45 @@
       <view class="ml-sm"><view class="text-sm text-secondary">我的家庭币</view><view class="coin-amount">{{userCoins}}</view></view>
     </view>
   </view>
+
+  <!-- 心愿卡区域 -->
+  <view class="wish-section">
+    <view class="section-title flex-between mb-md">
+      <text class="text-bold">心愿卡</text>
+      <text class="text-sm text-secondary">{{wishCost}}币/张</text>
+    </view>
+    <view class="wish-price-bar flex-between card" wx:if="{{isAdmin}}">
+      <view><view class="text-bold">心愿管理</view><view class="text-sm text-secondary">查看家人的心愿</view></view>
+      <view class="wish-price-btn" bindtap="showWishPriceSetting">设置价格</view>
+    </view>
+    <view wx:if="{{!isAdmin}}" class="wish-make-card card" bindtap="showWishModal">
+      <view class="wish-make-inner flex-row">
+        <text class="wish-make-icon">🌟</text>
+        <view class="ml-sm">
+          <view class="text-bold">许个心愿</view>
+          <view class="text-sm text-secondary">花{{wishCost}}币许下一个心愿</view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{wishes.length > 0}}">
+      <view class="wish-card card {{item.status === 'fulfilled' ? 'wish-fulfilled' : 'wish-pending'}}" wx:for="{{wishes}}" wx:key="_id">
+        <view class="wish-card-top flex-row">
+          <text class="wish-status-icon">{{item.status === 'fulfilled' ? '✅' : '🌟'}}</text>
+          <view class="flex-1 ml-sm">
+            <view class="text-bold">{{item.content}}</view>
+            <view class="text-sm text-secondary">{{item.nickName}} · {{item.status === 'fulfilled' ? '已实现' : '等待实现'}}</view>
+          </view>
+        </view>
+        <view wx:if="{{item.status === 'fulfilled' && item.fulfilledPhoto}}" class="wish-photo mt-sm" bindtap="viewWishPhoto" data-index="{{index}}">
+          <text class="text-sm text-primary">查看实现照片</text>
+        </view>
+        <view wx:if="{{isAdmin && item.status === 'pending'}}" class="wish-fulfill-btn mt-sm" bindtap="fulfillWish" data-index="{{index}}">拍照实现心愿</view>
+      </view>
+    </view>
+    <view class="empty-hint text-sm text-secondary" wx:if="{{wishes.length === 0}}">还没有心愿卡</view>
+  </view>
+
+  <!-- 奖品区域 -->
   <view class="add-reward-bar flex-between card" wx:if="{{isAdmin}}">
     <view><view class="text-bold">管理奖品</view><view class="text-sm text-secondary">为家人设置温暖的奖励</view></view>
     <button class="btn-secondary" bindtap="showAddReward">+ 添加</button>
@@ -40,6 +79,38 @@
       </view>
     </view>
   </view>
+
+  <!-- 许心愿弹窗 -->
+  <view class="modal-mask" wx:if="{{showWishModal}}" catchtap="hideWishModal"></view>
+  <view class="wish-modal-panel" wx:if="{{showWishModal}}">
+    <view class="modal-header flex-between"><text class="text-bold text-lg">许个心愿</text><text class="modal-close" bindtap="hideWishModal">✕</text></view>
+    <view class="wish-modal-body">
+      <view class="text-sm text-secondary mb-md">选择一个心愿，或自己写：</view>
+      <view class="wish-template-list">
+        <view class="wish-template-item {{wishContent === item ? 'selected' : ''}}" wx:for="{{wishTemplates}}" wx:key="*this" bindtap="selectWishTemplate" data-text="{{item}}">{{item}}</view>
+      </view>
+      <textarea class="wish-input" placeholder="或者写下你的心愿..." value="{{wishContent}}" bindinput="onWishInput" maxlength="50"></textarea>
+      <view class="wish-cost-info flex-between mt-md">
+        <text class="text-sm text-secondary">花费</text>
+        <text class="text-bold" style="color:#E6A800;">{{wishCost}} 🪙</text>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <view class="redeem-btn {{userCoins >= wishCost && wishContent ? '' : 'disabled'}}" bindtap="submitWish">{{userCoins >= wishCost ? '许愿' : '金币不足'}}</view>
+    </view>
+  </view>
+
+  <!-- 心愿卡价格设置弹窗 -->
+  <view class="modal-mask" wx:if="{{showWishPriceModal}}" catchtap="hideWishPriceModal"></view>
+  <view class="wish-modal-panel" wx:if="{{showWishPriceModal}}">
+    <view class="modal-header flex-between"><text class="text-bold text-lg">设置心愿卡价格</text><text class="modal-close" bindtap="hideWishPriceModal">✕</text></view>
+    <view class="wish-modal-body">
+      <view class="form-group"><text class="form-label">每张心愿卡所需家庭币</text><input class="form-input" type="number" value="{{wishPriceInput}}" bindinput="onWishPriceInput" placeholder="输入价格"/></view>
+    </view>
+    <view class="modal-footer"><view class="redeem-btn" bindtap="saveWishPrice">保存</view></view>
+  </view>
+
+  <!-- 编辑奖品弹窗 -->
   <view class="modal-mask" wx:if="{{showModal}}" catchtap="hideModal"></view>
   <view class="modal-panel {{showModal ? 'show' : ''}}" wx:if="{{showModal}}">
     <view class="modal-header flex-between"><text class="text-bold text-lg">{{editingReward ? '编辑奖品' : '添加奖品'}}</text><text class="modal-close" bindtap="hideModal">✕</text></view>
@@ -66,6 +137,8 @@
     </scroll-view>
     <view class="modal-footer"><button class="btn-primary" bindtap="saveReward" loading="{{saving}}">{{saving ? '保存中...' : '保存'}}</button></view>
   </view>
+
+  <!-- 兑换成功弹窗 -->
   <view class="modal-mask" wx:if="{{showRedeemSuccess}}" bindtap="hideRedeemSuccess"></view>
   <view class="redeem-success-panel {{showRedeemSuccess ? 'show' : ''}}" wx:if="{{showRedeemSuccess}}">
     <view class="success-animation">🎉</view><view class="success-title">兑换成功！</view><view class="success-reward-name">{{redeemedReward.name}}</view>

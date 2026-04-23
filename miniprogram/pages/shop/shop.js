@@ -6,21 +6,40 @@ Page({
     largeText: wx.getStorageSync("largeText") || false,
     openid: null, userCoins: 0, isAdmin: false, familyId: null, rewards: [], redeemHistory: [],
     showModal: false, editingReward: null, formName: '', formDesc: '', formCoins: '', formType: 'photo', formTextContent: '', formMediaUrl: '', formStock: '1', saving: false,
-    showRedeemSuccess: false, redeemedReward: {}
+    showRedeemSuccess: false, redeemedReward: {},
+    // 心愿卡
+    wishes: [], showWishModal: false, wishContent: '', wishCost: 10,
+    wishTemplates: ['一起吃顿饭', '打个视频电话', '一起去散步', '教我用手机', '来家里坐坐'],
+    showWishDetail: false, wishDetail: {},
+    // 心愿卡价格设置
+    showWishPriceModal: false, wishPriceInput: '10'
   },
   async onLoad() {
     try {
-      const openid = await app.getOpenid()
-      const user = await dbUtil.getUserByOpenid(openid)
-      if (user) { this.setData({ openid, userCoins: user.coins||0, isAdmin: user.role==='admin', familyId: user.familyId }); await this.loadRewards() }
+      var openid = await app.getOpenid()
+      var user = await dbUtil.getUserByOpenid(openid)
+      if (user) {
+        // 读取管理员设定的心愿卡价格
+        var family = user.familyId ? await dbUtil.getFamily(user.familyId) : null
+        var wishCost = (family && family.wishCost) ? family.wishCost : 10
+        this.setData({ openid: openid, userCoins: user.coins||0, isAdmin: user.role==='admin', familyId: user.familyId, wishCost: wishCost, wishPriceInput: String(wishCost) })
+        await this.loadRewards()
+        await this.loadWishes()
+      }
     } catch(e) { console.error('shop onLoad error:', e) }
   },
   async onShow() {
     this.setData({ largeText: wx.getStorageSync("largeText") || false })
-    if (this.data.openid) { const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0, isAdmin: user.role==='admin' }); await this.loadRewards() }
+    if (this.data.openid) {
+      var user = await dbUtil.getUserByOpenid(this.data.openid)
+      if (user) this.setData({ userCoins: user.coins||0, isAdmin: user.role==='admin' })
+      await this.loadRewards()
+      await this.loadWishes()
+    }
   },
-  async onPullDownRefresh() { await this.loadRewards(); const user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); wx.stopPullDownRefresh() },
+  async onPullDownRefresh() { await this.loadRewards(); await this.loadWishes(); var user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); wx.stopPullDownRefresh() },
   async loadRewards() { if (!this.data.familyId) return; try { this.setData({ rewards: await dbUtil.getRewardList(this.data.familyId) }) } catch(e) { console.error('加载奖品失败:',e) } },
+  async loadWishes() { if (!this.data.familyId) return; try { this.setData({ wishes: await dbUtil.getWishList(this.data.familyId) }) } catch(e) { console.error('加载心愿失败:',e) } },
   onRewardTap(e) { const r = this.data.rewards[e.currentTarget.dataset.index]; if (r.type==='text'&&r.textContent) wx.showModal({ title: r.name, content: r.textContent, showCancel: false, confirmText: '知道了' }) },
   onRedeem(e) {
     console.log('[onRedeem] triggered', e.currentTarget.dataset)
@@ -175,6 +194,113 @@ Page({
     })
     audio.play()
     this._audioCtx = audio
+  },
+  // === 心愿卡 ===
+  showWishModal() { this.setData({ showWishModal: true, wishContent: '' }) },
+  hideWishModal() { this.setData({ showWishModal: false }) },
+  selectWishTemplate(e) { this.setData({ wishContent: e.currentTarget.dataset.text }) },
+  onWishInput(e) { this.setData({ wishContent: e.detail.value }) },
+  submitWish() {
+    var that = this
+    var content = this.data.wishContent.trim()
+    if (!content) { wx.showToast({ title: '请输入心愿内容', icon: 'none' }); return }
+    if (this.data.userCoins < this.data.wishCost) { wx.showToast({ title: '金币不足', icon: 'none' }); return }
+    wx.showModal({
+      title: '确认许愿',
+      content: '花费 ' + this.data.wishCost + ' 枚家庭币许下心愿「' + content + '」？',
+      confirmText: '许愿',
+      confirmColor: '#FF8C42',
+      success: function(res) {
+        if (!res.confirm) return
+        var userInfo = app.globalData.userInfo || {}
+        dbUtil.createWish({
+          familyId: that.data.familyId, openid: that.data.openid,
+          nickName: userInfo.nickName || '家人', avatarUrl: userInfo.avatarUrl || '',
+          content: content, cost: that.data.wishCost
+        }).then(function() {
+          that.setData({ userCoins: that.data.userCoins - that.data.wishCost, showWishModal: false })
+          wx.showToast({ title: '心愿已发出', icon: 'success' })
+          // 发动态
+          return dbUtil.postFeed({
+            familyId: that.data.familyId, openid: that.data.openid,
+            nickName: userInfo.nickName || '家人', avatarUrl: userInfo.avatarUrl || '',
+            type: 'wish', content: '许下心愿：' + content, steps: 0, coins: -that.data.wishCost
+          })
+        }).then(function() {
+          return that.loadWishes()
+        }).catch(function(err) {
+          console.error('许愿失败:', err)
+          wx.showToast({ title: '许愿失败', icon: 'none' })
+        })
+      }
+    })
+  },
+  fulfillWish(e) {
+    var that = this
+    var index = parseInt(e.currentTarget.dataset.index)
+    var wish = this.data.wishes[index]
+    if (!wish) return
+    wx.chooseMedia({
+      count: 1, mediaType: ['image'], sourceType: ['album', 'camera'], sizeType: ['compressed'],
+      success: function(mediaRes) {
+        wx.showLoading({ title: '上传中...' })
+        wx.cloud.uploadFile({
+          cloudPath: 'wishes/' + that.data.familyId + '/' + Date.now() + '.jpg',
+          filePath: mediaRes.tempFiles[0].tempFilePath
+        }).then(function(uploadRes) {
+          var userInfo = app.globalData.userInfo || {}
+          return dbUtil.fulfillWish(wish._id, {
+            openid: that.data.openid, nickName: userInfo.nickName || '家人',
+            photoUrl: uploadRes.fileID
+          }).then(function() {
+            // 发动态
+            return dbUtil.postFeed({
+              familyId: that.data.familyId, openid: that.data.openid,
+              nickName: userInfo.nickName || '家人', avatarUrl: userInfo.avatarUrl || '',
+              type: 'wish_fulfilled', content: '实现了心愿：' + wish.content,
+              images: [uploadRes.fileID], steps: 0, coins: 0
+            })
+          })
+        }).then(function() {
+          wx.hideLoading()
+          wx.showToast({ title: '心愿已实现', icon: 'success' })
+          return that.loadWishes()
+        }).catch(function(err) {
+          wx.hideLoading()
+          console.error('实现心愿失败:', err)
+          wx.showToast({ title: '操作失败', icon: 'none' })
+        })
+      }
+    })
+  },
+  viewWishPhoto(e) {
+    var index = parseInt(e.currentTarget.dataset.index)
+    var wish = this.data.wishes[index]
+    if (!wish || !wish.fulfilledPhoto) return
+    var that = this
+    if (wish.fulfilledPhoto.indexOf('cloud://') === 0) {
+      wx.cloud.getTempFileURL({ fileList: [wish.fulfilledPhoto] }).then(function(res) {
+        var f = res.fileList && res.fileList[0]
+        if (f && f.tempFileURL) wx.previewImage({ urls: [f.tempFileURL] })
+      })
+    } else {
+      wx.previewImage({ urls: [wish.fulfilledPhoto] })
+    }
+  },
+  // 管理员设置心愿卡价格
+  showWishPriceSetting() { this.setData({ showWishPriceModal: true, wishPriceInput: String(this.data.wishCost) }) },
+  hideWishPriceModal() { this.setData({ showWishPriceModal: false }) },
+  onWishPriceInput(e) { this.setData({ wishPriceInput: e.detail.value }) },
+  saveWishPrice() {
+    var price = parseInt(this.data.wishPriceInput)
+    if (!price || price <= 0) { wx.showToast({ title: '请输入有效价格', icon: 'none' }); return }
+    var that = this
+    dbUtil.collections.families.where({ _id: this.data.familyId }).update({ data: { wishCost: price } }).then(function() {
+      that.setData({ wishCost: price, showWishPriceModal: false })
+      wx.showToast({ title: '价格已更新', icon: 'success' })
+    }).catch(function() {
+      wx.showToast({ title: '保存失败', icon: 'none' })
+    })
   },
   preventBubble() {}
 })

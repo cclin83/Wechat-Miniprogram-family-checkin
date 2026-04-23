@@ -51,3 +51,17 @@
 .comment-input { flex: 1; background: var(--bg); border-radius: 36rpx; padding: 16rpx 28rpx; font-size: 30rpx; }
 .comment-send-btn { background: var(--primary) !important; color: #FFF !important; font-size: 28rpx !important; padding: 12rpx 32rpx !important; border-radius: 36rpx !important; line-height: 1.4 !important; min-height: auto !important; }
 .load-more { padding: 32rpx 0; }
+
+/* 排行榜 */
+.ranking-card { padding: 24rpx 32rpx; }
+.ranking-list { }
+.ranking-item { padding: 16rpx 0; border-bottom: 1rpx solid var(--border); align-items: center; }
+.ranking-item:last-child { border-bottom: none; }
+.ranking-item.ranking-first { }
+.ranking-pos { width: 48rpx; text-align: center; }
+.ranking-medal { font-size: 36rpx; }
+.ranking-num { font-size: 28rpx; color: var(--text-secondary); font-weight: 600; }
+.ranking-avatar { width: 56rpx; height: 56rpx; border-radius: 50%; margin-left: 16rpx; }
+.ranking-name { font-size: 30rpx; }
+.ranking-steps { font-size: 28rpx; color: var(--text-secondary); font-weight: 600; }
+.ranking-steps-first { color: #E6A800; font-size: 32rpx; }

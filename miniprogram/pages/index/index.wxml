@@ -36,6 +36,28 @@
       </view>
       <view class="coin-badge">+{{todayCoins}}</view>
     </view>
+    <!-- 家庭排行榜 -->
+    <view class="ranking-card card" wx:if="{{ranking.length > 0}}">
+      <view class="section-title flex-between mb-md">
+        <text class="text-bold">今日排行榜</text>
+        <text class="text-sm text-secondary" wx:if="{{ranking.length > 3 && !showAllRanking}}" bindtap="toggleRanking">展开</text>
+        <text class="text-sm text-secondary" wx:if="{{showAllRanking}}" bindtap="toggleRanking">收起</text>
+      </view>
+      <view class="ranking-list">
+        <view class="ranking-item flex-row {{index === 0 ? 'ranking-first' : ''}}" wx:for="{{showAllRanking ? ranking : ranking.slice(0, 3)}}" wx:key="openid">
+          <view class="ranking-pos">
+            <text wx:if="{{index === 0}}" class="ranking-medal">🥇</text>
+            <text wx:elif="{{index === 1}}" class="ranking-medal">🥈</text>
+            <text wx:elif="{{index === 2}}" class="ranking-medal">🥉</text>
+            <text wx:else class="ranking-num">{{index + 1}}</text>
+          </view>
+          <image class="ranking-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          <text class="ranking-name flex-1 ml-sm">{{item.nickName}}</text>
+          <text class="ranking-steps {{index === 0 ? 'ranking-steps-first' : ''}}">{{item.steps}} 步</text>
+        </view>
+      </view>
+    </view>
+
     <view class="feed-section">
       <view class="section-title flex-between">
         <text class="text-bold">家庭动态</text>
@@ -55,6 +77,8 @@
           <view class="feed-tag feed-tag-{{item.type}}">
             <text wx:if="{{item.type === 'checkin'}}">🚶 打卡</text>
             <text wx:elif="{{item.type === 'reward'}}">🎁 兑换</text>
+            <text wx:elif="{{item.type === 'wish'}}">🌟 心愿</text>
+            <text wx:elif="{{item.type === 'wish_fulfilled'}}">✅ 实现</text>
             <text wx:elif="{{item.type === 'exercise'}}">💪 健身</text>
             <text wx:else>💬 分享</text>
           </view>

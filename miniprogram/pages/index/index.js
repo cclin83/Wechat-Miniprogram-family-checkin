@@ -6,7 +6,8 @@ Page({
     familyId: null, familyName: '', members: [], totalStepsFormatted: '0',
     openid: null, todayCoins: 0, totalCoins: 0,
     feedList: [], feedPage: 0, hasMore: true, loading: false,
-    largeText: wx.getStorageSync("largeText") || false, showCommentInput: false, replyTo: "", commentText: '', commentFeedId: null, commentFeedIndex: null
+    largeText: wx.getStorageSync("largeText") || false, showCommentInput: false, replyTo: "", commentText: '', commentFeedId: null, commentFeedIndex: null,
+    ranking: [], showAllRanking: false
   },
   async onLoad() {
     try {
@@ -58,6 +59,11 @@ Page({
       }
       this.setData({ familyName: family.name, members, totalStepsFormatted: util.formatSteps(totalSteps) })
       setTimeout(() => { members.forEach((member, index) => { this.drawProgressRing(index, member.todaySteps) }) }, 300)
+      // 加载排行榜
+      try {
+        var ranking = await db.getTodayRanking(this.data.familyId)
+        this.setData({ ranking: ranking })
+      } catch(e) { console.error('加载排行榜失败:', e) }
     } catch (err) { console.error('加载家庭数据失败:', err) }
   },
   drawProgressRing(index, steps) {
@@ -116,6 +122,7 @@ Page({
   },
   previewImage(e) { const { urls, current } = e.currentTarget.dataset; wx.previewImage({ urls, current }) },
   onMemberTap(e) { wx.showToast({ title: '查看成员详情', icon: 'none' }) },
+  toggleRanking() { this.setData({ showAllRanking: !this.data.showAllRanking }) },
   goCreateFamily() { wx.switchTab({ url: '/pages/profile/profile' }) },
   goJoinFamily() { wx.switchTab({ url: '/pages/profile/profile' }) }
 })
