@@ -37,11 +37,11 @@
             <text class="text-sm text-primary">查看照片</text>
           </view>
         </view>
-        <view wx:if="{{item.status === 'pending' && item.openid !== openid}}" class="wish-fulfill-actions flex-row mt-sm">
+        <view wx:if="{{item.status === 'pending' && (item.openid !== openid || isAdmin)}}" class="wish-fulfill-actions flex-row mt-sm">
           <view class="wish-fulfill-btn flex-1" bindtap="fulfillWish" data-index="{{index}}">拍照实现</view>
           <view class="wish-fulfill-btn-text flex-1" bindtap="fulfillWishDirect" data-index="{{index}}">直接标记完成</view>
         </view>
-        <view wx:if="{{item.status === 'pending' && item.openid === openid}}" class="text-sm text-secondary mt-sm">等待家人实现...</view>
+        <view wx:if="{{item.status === 'pending' && item.openid === openid && !isAdmin}}" class="text-sm text-secondary mt-sm">等待家人实现...</view>
       </view>
     </view>
     <view class="empty-hint text-sm text-secondary" wx:if="{{wishes.length === 0}}">还没有心愿卡</view>
