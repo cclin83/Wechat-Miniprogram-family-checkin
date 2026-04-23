@@ -9,13 +9,13 @@
     </view>
     <view class="steps-targets flex-between mt-md">
       <view class="target-item {{steps >= 3000 ? 'reached' : ''}}">
-        <text class="target-icon">🪙</text><text class="target-text">3000步</text><text class="target-coin">+1币</text>
+        <text class="target-coin-badge">1</text><text class="target-text">3000步</text><text class="target-coin">+1币</text>
       </view>
       <view class="target-item {{steps >= 5000 ? 'reached' : ''}}">
-        <text class="target-icon">🪙🪙</text><text class="target-text">5000步</text><text class="target-coin">+2币</text>
+        <text class="target-coin-badge">2</text><text class="target-text">5000步</text><text class="target-coin">+2币</text>
       </view>
       <view class="target-item {{steps >= 8000 ? 'reached' : ''}}">
-        <text class="target-icon">🪙🪙🪙</text><text class="target-text">8000步</text><text class="target-coin">+3币</text>
+        <text class="target-coin-badge">3</text><text class="target-text">8000步</text><text class="target-coin">+3币</text>
       </view>
     </view>
     <button class="btn-primary mt-lg sync-btn" bindtap="syncSteps" loading="{{syncing}}">{{syncing ? '同步中...' : '同步微信运动步数'}}</button>

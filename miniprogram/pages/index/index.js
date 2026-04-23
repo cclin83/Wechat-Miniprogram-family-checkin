@@ -57,13 +57,13 @@ Page({
           this.setData({ todayCoins: checkin ? checkin.coins : 0, totalCoins: member.coins || 0 })
         }
       }
-      this.setData({ familyName: family.name, members, totalStepsFormatted: util.formatSteps(totalSteps) })
+      // 用已有的members数据生成排行榜，不需要额外查询
+      var ranking = members.map(function(m) {
+        return { openid: m.openid, nickName: m.nickName || '家人', avatarUrl: m.avatarUrl || '', steps: m.todaySteps || 0 }
+      })
+      ranking.sort(function(a, b) { return b.steps - a.steps })
+      this.setData({ familyName: family.name, members, totalStepsFormatted: util.formatSteps(totalSteps), ranking: ranking })
       setTimeout(() => { members.forEach((member, index) => { this.drawProgressRing(index, member.todaySteps) }) }, 300)
-      // 加载排行榜
-      try {
-        var ranking = await db.getTodayRanking(this.data.familyId)
-        this.setData({ ranking: ranking })
-      } catch(e) { console.error('加载排行榜失败:', e) }
     } catch (err) { console.error('加载家庭数据失败:', err) }
   },
   drawProgressRing(index, steps) {

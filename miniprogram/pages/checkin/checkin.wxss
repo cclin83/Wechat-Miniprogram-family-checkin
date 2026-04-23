@@ -2,13 +2,16 @@
 .steps-hero { text-align: center; padding: 48rpx 32rpx; }
 .steps-ring-big { position: relative; width: 360rpx; height: 360rpx; margin: 0 auto; }
 .steps-ring-canvas { width: 360rpx; height: 360rpx; }
-.steps-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; width: 280rpx; }
-.steps-number { font-size: 52rpx; font-weight: 800; color: var(--primary); line-height: 1; }
+.steps-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; width: 240rpx; z-index: 10; }
+.steps-number { font-size: 48rpx; font-weight: 800; color: var(--primary); line-height: 1; overflow: visible; white-space: nowrap; }
 .steps-label { font-size: 28rpx; color: var(--text-secondary); margin-top: 4rpx; }
 .steps-targets { padding: 24rpx 16rpx; background: var(--bg); border-radius: 16rpx; }
 .target-item { display: flex; flex-direction: column; align-items: center; gap: 6rpx; opacity: 0.4; transition: opacity 0.3s; }
 .target-item.reached { opacity: 1; }
-.target-icon { font-size: 28rpx; } .target-text { font-size: 24rpx; color: var(--text-secondary); } .target-coin { font-size: 22rpx; color: var(--primary); font-weight: 600; }
+.target-coin-badge { display: inline-flex; align-items: center; justify-content: center; width: 48rpx; height: 48rpx; border-radius: 50%; background: linear-gradient(135deg, #FFD54F, #FFB300); color: #FFF; font-size: 28rpx; font-weight: 800; box-shadow: 0 2rpx 8rpx rgba(255,179,0,0.3); }
+.target-item.reached .target-coin-badge { background: linear-gradient(135deg, #FF8C42, #E07030); }
+.target-text { font-size: 24rpx; color: var(--text-secondary); }
+.target-coin { font-size: 22rpx; color: var(--primary); font-weight: 600; }
 .sync-btn { width: 80% !important; margin: 0 auto; }
 .checkin-post { padding: 32rpx; }
 .mood-tags { flex-wrap: wrap; gap: 16rpx; }
