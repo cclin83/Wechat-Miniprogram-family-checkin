@@ -75,6 +75,13 @@ Page({
         return { openid: m.openid, nickName: m.nickName || '家人', avatarUrl: m.avatarUrl || '', steps: m.todaySteps || 0 }
       })
       ranking.sort(function(a, b) { return b.steps - a.steps })
+      // 批量转换头像 cloud:// URL
+      var avatarIds = members.map(function(m) { return m.avatarUrl }).filter(function(u) { return u && u.indexOf('cloud://') === 0 })
+      if (avatarIds.length > 0) {
+        var urlMap = await util.batchGetTempUrls(avatarIds)
+        members.forEach(function(m) { if (urlMap[m.avatarUrl]) m.avatarUrl = urlMap[m.avatarUrl] })
+        ranking.forEach(function(r) { if (urlMap[r.avatarUrl]) r.avatarUrl = urlMap[r.avatarUrl] })
+      }
       this.setData({ familyName: family.name, members, totalStepsFormatted: util.formatSteps(totalSteps), ranking: ranking })
     } catch (err) { console.error('加载家庭数据失败:', err) }
   },
@@ -85,6 +92,19 @@ Page({
     try {
       const feeds = await db.getFeedList(this.data.familyId, this.data.feedPage)
       const processed = feeds.map(f => ({...f, timeAgo: util.timeAgo(f.createdAt ? new Date(f.createdAt).getTime() : Date.now()), stepsFormatted: util.formatSteps(f.steps), liked: f.likes && f.likes.includes(this.data.openid)}))
+      // 批量转换动态中的头像和图片
+      var allUrls = []
+      processed.forEach(function(f) {
+        if (f.avatarUrl && f.avatarUrl.indexOf('cloud://') === 0) allUrls.push(f.avatarUrl)
+        if (f.images) f.images.forEach(function(img) { if (img && img.indexOf('cloud://') === 0) allUrls.push(img) })
+      })
+      if (allUrls.length > 0) {
+        var urlMap = await util.batchGetTempUrls(allUrls)
+        processed.forEach(function(f) {
+          if (urlMap[f.avatarUrl]) f.avatarUrl = urlMap[f.avatarUrl]
+          if (f.images) f.images = f.images.map(function(img) { return urlMap[img] || img })
+        })
+      }
       this.setData({ feedList: [...this.data.feedList, ...processed], feedPage: this.data.feedPage+1, hasMore: feeds.length >= 20, loading: false })
     } catch (err) { console.error('加载动态失败:', err); this.setData({ loading: false }) }
   },

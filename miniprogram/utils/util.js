@@ -113,7 +113,33 @@ var MOOD_TAGS = [
   { emoji: '🌅', text: '风景美' }
 ]
 
+// 云文件 ID 转临时 URL 缓存
+var _urlCache = {}
+async function batchGetTempUrls(fileIds) {
+  if (!fileIds || fileIds.length === 0) return {}
+  var toFetch = []
+  var result = {}
+  fileIds.forEach(function(id) {
+    if (!id || id.indexOf('cloud://') !== 0) { result[id] = id; return }
+    if (_urlCache[id]) { result[id] = _urlCache[id]; return }
+    toFetch.push(id)
+  })
+  if (toFetch.length > 0) {
+    try {
+      var res = await wx.cloud.getTempFileURL({ fileList: toFetch })
+      res.fileList.forEach(function(f) {
+        if (f.tempFileURL) { _urlCache[f.fileID] = f.tempFileURL; result[f.fileID] = f.tempFileURL }
+        else { result[f.fileID] = f.fileID }
+      })
+    } catch (e) {
+      toFetch.forEach(function(id) { result[id] = id })
+    }
+  }
+  return result
+}
+
 module.exports = {
+  batchGetTempUrls: batchGetTempUrls,
   formatDate: formatDate,
   formatTime: formatTime,
   timeAgo: timeAgo,
