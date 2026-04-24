@@ -32,7 +32,11 @@ Page({
     this.setData({ largeText: wx.getStorageSync("largeText") || false })
     if (this.data.openid) {
       var user = await dbUtil.getUserByOpenid(this.data.openid)
-      if (user) this.setData({ userCoins: user.coins||0, isAdmin: user.role==='admin' })
+      if (user) {
+        var family = user.familyId ? await dbUtil.getFamily(user.familyId) : null
+        var wishCost = (family && family.wishCost) ? family.wishCost : 10
+        this.setData({ userCoins: user.coins||0, isAdmin: user.role==='admin', familyId: user.familyId, wishCost: wishCost })
+      }
       await this.loadRewards()
       await this.loadWishes()
     }

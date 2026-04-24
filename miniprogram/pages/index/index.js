@@ -29,6 +29,18 @@ Page({
   },
   async onShow() {
     this.setData({ largeText: wx.getStorageSync("largeText") || false })
+    // 重新读取用户信息，确保 familyId 是最新的
+    if (this.data.openid) {
+      var user = await db.getUserByOpenid(this.data.openid)
+      if (user && user.familyId) {
+        this.setData({ familyId: user.familyId, totalCoins: user.coins || 0 })
+        app.globalData.familyId = user.familyId
+        app.globalData.role = user.role
+      } else {
+        this.setData({ familyId: null, familyName: '', members: [], ranking: [], feedList: [], totalCoins: 0 })
+        return
+      }
+    }
     if (this.data.familyId) {
       await this.loadFamilyData()
       this.setData({ feedPage: 0, feedList: [], hasMore: true })
