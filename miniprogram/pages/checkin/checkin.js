@@ -101,9 +101,12 @@ Page({
     this.setData({ checking: true })
     try {
       const coins = util.calcCoins(this.data.steps)
-      await dbUtil.checkin(this.data.openid, this.data.familyId, { steps: this.data.steps, coins, content: this.data.postContent, images: this.data.postImages, mood: this.data.selectedMood })
+      const result = await dbUtil.checkin(this.data.openid, this.data.familyId, { steps: this.data.steps, coins, content: this.data.postContent, images: this.data.postImages, mood: this.data.selectedMood })
+      // 用差值更新，避免重复累加
+      const coinsDiff = coins - result.prevCoins
+      const stepsDiff = this.data.steps - result.prevSteps
       const user = await dbUtil.getUserByOpenid(this.data.openid)
-      await dbUtil.updateUser(user._id, { coins: dbUtil._.inc(coins), totalSteps: dbUtil._.inc(this.data.steps), totalCheckins: dbUtil._.inc(this.data.alreadyChecked ? 0 : 1) })
+      await dbUtil.updateUser(user._id, { coins: dbUtil._.inc(coinsDiff), totalSteps: dbUtil._.inc(stepsDiff), totalCheckins: dbUtil._.inc(result.updated ? 0 : 1) })
       const userInfo = app.globalData.userInfo || {}
       await dbUtil.postFeed({ familyId: this.data.familyId, openid: this.data.openid, nickName: userInfo.nickName||'家人', avatarUrl: userInfo.avatarUrl||'', type: 'checkin', content: this.data.postContent, images: this.data.postImages, mood: this.data.selectedMood, steps: this.data.steps, coins })
       this.setData({ alreadyChecked: true, checking: false })

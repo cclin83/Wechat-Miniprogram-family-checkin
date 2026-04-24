@@ -8,11 +8,12 @@ exports.main = async (event, context) => {
   const today = formatDate(new Date())
   const targetDate = event.date || today
   try {
-    const checkinsRes = await db.collection('checkins').where({ date: targetDate }).get()
+    // 只查询未结算的记录，客户端打卡时已设置 settled: true 的不会重复加币
+    const checkinsRes = await db.collection('checkins').where({ date: targetDate, settled: _.neq(true) }).get()
     let totalCoinsAwarded = 0
     for (const checkin of checkinsRes.data) {
       const coins = calcCoins(checkin.steps)
-      if (coins > 0 && !checkin.settled) {
+      if (coins > 0) {
         await db.collection('checkins').doc(checkin._id).update({ data: { coins, settled: true, settledAt: db.serverDate() } })
         await db.collection('users').where({ openid: checkin.openid }).update({ data: { coins: _.inc(coins) } })
         totalCoinsAwarded += coins

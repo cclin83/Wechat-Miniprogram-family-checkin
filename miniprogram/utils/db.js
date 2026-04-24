@@ -50,9 +50,15 @@ async function checkin(openid, familyId, data) {
   const today = util.todayKey()
   const existing = await collections.checkins.where({ openid, date: today }).get()
   if (existing.data.length > 0) {
-    return collections.checkins.doc(existing.data[0]._id).update({ data: { steps: data.steps, coins: data.coins, content: data.content||'', images: data.images||[], mood: data.mood||'', updatedAt: db.serverDate() } })
+    var prev = existing.data[0]
+    var prevCoins = prev.coins || 0
+    var prevSteps = prev.steps || 0
+    await collections.checkins.doc(prev._id).update({ data: { steps: data.steps, coins: data.coins, content: data.content||'', images: data.images||[], mood: data.mood||'', settled: true, updatedAt: db.serverDate() } })
+    // 返回旧记录的金币和步数，供调用方计算差值
+    return { updated: true, prevCoins: prevCoins, prevSteps: prevSteps }
   }
-  return collections.checkins.add({ data: { openid, familyId, date: today, steps: data.steps, coins: data.coins, content: data.content||'', images: data.images||[], mood: data.mood||'', createdAt: db.serverDate() } })
+  await collections.checkins.add({ data: { openid, familyId, date: today, steps: data.steps, coins: data.coins, content: data.content||'', images: data.images||[], mood: data.mood||'', settled: true, createdAt: db.serverDate() } })
+  return { updated: false, prevCoins: 0, prevSteps: 0 }
 }
 async function getMonthCheckins(openid, year, month) {
   const startDate = `${year}-${String(month+1).padStart(2,'0')}-01`
@@ -91,18 +97,33 @@ async function redeemReward(rewardId, openid, userCoins) {
   const r = reward.data
   if (userCoins < r.coinsNeeded) throw new Error('金币不足')
   if (r.redeemed >= r.stock) throw new Error('奖品已兑完')
-  await collections.users.where({ openid }).update({ data: { coins: _.inc(-r.coinsNeeded) } })
-  await collections.rewards.doc(rewardId).update({ data: { redeemed: _.inc(1) } })
+  // 条件更新：只有金币 >= 所需金币时才扣减，防止并发扣到负数
+  const deductRes = await collections.users.where({ openid, coins: _.gte(r.coinsNeeded) }).update({ data: { coins: _.inc(-r.coinsNeeded) } })
+  if (deductRes.stats.updated === 0) throw new Error('金币不足')
+  // 条件更新：只有未兑完时才增加兑换数，防止超额兑换
+  const redeemRes = await collections.rewards.where({ _id: rewardId, redeemed: _.lt(r.stock) }).update({ data: { redeemed: _.inc(1) } })
+  if (redeemRes.stats.updated === 0) {
+    // 回滚金币
+    await collections.users.where({ openid }).update({ data: { coins: _.inc(r.coinsNeeded) } })
+    throw new Error('奖品已兑完')
+  }
   return r
 }
 // === 心愿卡 ===
 async function createWish(data) {
-  // 扣币
-  await collections.users.where({ openid: data.openid }).update({ data: { coins: _.inc(-data.cost) } })
-  var wish = { familyId: data.familyId, openid: data.openid, nickName: data.nickName, avatarUrl: data.avatarUrl, content: data.content, cost: data.cost, status: 'pending', fulfilledBy: '', fulfilledNickName: '', fulfilledPhoto: '', fulfilledAt: null, createdAt: db.serverDate() }
-  var res = await collections.wishes.add({ data: wish })
-  wish._id = res._id
-  return wish
+  // 条件更新：只有金币 >= 所需金币时才扣减，防止并发扣到负数
+  var deductRes = await collections.users.where({ openid: data.openid, coins: _.gte(data.cost) }).update({ data: { coins: _.inc(-data.cost) } })
+  if (deductRes.stats.updated === 0) throw new Error('金币不足')
+  try {
+    var wish = { familyId: data.familyId, openid: data.openid, nickName: data.nickName, avatarUrl: data.avatarUrl, content: data.content, cost: data.cost, status: 'pending', fulfilledBy: '', fulfilledNickName: '', fulfilledPhoto: '', fulfilledAt: null, createdAt: db.serverDate() }
+    var res = await collections.wishes.add({ data: wish })
+    wish._id = res._id
+    return wish
+  } catch (err) {
+    // 创建心愿失败，回滚金币
+    await collections.users.where({ openid: data.openid }).update({ data: { coins: _.inc(data.cost) } })
+    throw err
+  }
 }
 async function getWishList(familyId) {
   var res = await collections.wishes.where({ familyId }).orderBy('createdAt', 'desc').limit(50).get()
