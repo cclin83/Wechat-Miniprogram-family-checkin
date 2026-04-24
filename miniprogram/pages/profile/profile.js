@@ -196,6 +196,31 @@ Page({
       }
     })
   },
+  leaveFamily() {
+    var that = this
+    wx.showModal({
+      title: '退出家庭',
+      content: '退出后金币和数据将清零，确定退出吗？',
+      confirmText: '确定退出',
+      confirmColor: '#e74c3c',
+      success: async function(res) {
+        if (!res.confirm) return
+        try {
+          wx.showLoading({ title: '退出中...' })
+          await dbUtil.leaveFamily(that.data.openid, that.data.familyId)
+          app.globalData.familyId = null
+          app.globalData.role = null
+          that.setData({ familyId: null, role: null, isAdmin: false, isCreator: false, inviteCode: '', familyName: '', memberCount: 0, stats: { totalCheckins: 0, coins: 0, streak: 0, totalSteps: 0 } })
+          wx.hideLoading()
+          wx.showToast({ title: '已退出家庭', icon: 'success' })
+        } catch(e) {
+          wx.hideLoading()
+          console.error('退出家庭失败:', e)
+          wx.showToast({ title: '退出失败', icon: 'none' })
+        }
+      }
+    })
+  },
   toggleLargeText() { const v = !this.data.largeText; this.setData({ largeText: v }); wx.setStorageSync('largeText', v); app.globalData.largeText = v; wx.showToast({ title: v ? '已开启大字模式' : '已关闭大字模式', icon: 'none' }) },
   showAbout() { wx.showModal({ title: '亲情健步', content: '运动连接家人的爱\n让我们一起变得更健康更快乐\n\n1.0版本正式上线', showCancel: false, confirmText: '知道了' }) }
 })

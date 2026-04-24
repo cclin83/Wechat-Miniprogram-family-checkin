@@ -168,4 +168,15 @@ async function getTodayRanking(familyId) {
   return ranking
 }
 
-module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward, getUserRedemptions, getRewardRedemptions, createWish, getWishList, fulfillWish, getTodayRanking }
+async function leaveFamily(openid, familyId) {
+  // 从家庭 members 中移除
+  await collections.families.where({ _id: familyId }).update({ data: { members: _.pull(openid) } })
+  // 清零用户数据并清空家庭关联
+  await collections.users.where({ openid }).update({ data: { familyId: '', role: '', coins: 0, totalSteps: 0, totalCheckins: 0, streak: 0 } })
+  // 清除兑换记录
+  var redemptions = await collections.redemptions.where({ openid }).get()
+  for (var i = 0; i < redemptions.data.length; i++) {
+    await collections.redemptions.doc(redemptions.data[i]._id).remove()
+  }
+}
+module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, leaveFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward, getUserRedemptions, getRewardRedemptions, createWish, getWishList, fulfillWish, getTodayRanking }
