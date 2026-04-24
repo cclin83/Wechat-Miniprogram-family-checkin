@@ -53,7 +53,7 @@ async function checkin(openid, familyId, data) {
     var prev = existing.data[0]
     var prevCoins = prev.coins || 0
     var prevSteps = prev.steps || 0
-    await collections.checkins.doc(prev._id).update({ data: { steps: data.steps, coins: data.coins, content: data.content||'', images: data.images||[], mood: data.mood||'', settled: true, updatedAt: db.serverDate() } })
+    await collections.checkins.doc(prev._id).update({ data: { steps: data.steps, coins: data.coins, settled: true, updatedAt: db.serverDate() } })
     // 返回旧记录的金币和步数，供调用方计算差值
     return { updated: true, prevCoins: prevCoins, prevSteps: prevSteps }
   }

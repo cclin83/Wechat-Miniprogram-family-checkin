@@ -29,7 +29,7 @@ Page({
     try {
       var checkin = await dbUtil.getTodayCheckin(this.data.openid)
       if (checkin) {
-        this.setData({ steps: checkin.steps, stepsFormatted: util.formatSteps(checkin.steps), alreadyChecked: true, selectedMood: checkin.mood||'', postContent: checkin.content||'', postImages: checkin.images||[] })
+        this.setData({ steps: checkin.steps, stepsFormatted: util.formatSteps(checkin.steps), alreadyChecked: true })
         this.drawStepsRing()
       }
     } catch (err) {
@@ -109,9 +109,9 @@ Page({
       await dbUtil.updateUser(user._id, { coins: dbUtil._.inc(coinsDiff), totalSteps: dbUtil._.inc(stepsDiff), totalCheckins: dbUtil._.inc(result.updated ? 0 : 1) })
       const userInfo = app.globalData.userInfo || {}
       await dbUtil.postFeed({ familyId: this.data.familyId, openid: this.data.openid, nickName: userInfo.nickName||'家人', avatarUrl: userInfo.avatarUrl||'', type: 'checkin', content: this.data.postContent, images: this.data.postImages, mood: this.data.selectedMood, steps: this.data.steps, coins })
-      this.setData({ alreadyChecked: true, checking: false })
+      this.setData({ alreadyChecked: true, checking: false, selectedMood: '', postContent: '', postImages: [] })
       await this.loadCalendar()
-      wx.showToast({ title: `打卡成功！+${coins}币`, icon: 'success', duration: 2000 })
+      wx.showToast({ title: coinsDiff > 0 ? `打卡成功！+${coinsDiff}币` : '打卡成功！', icon: 'success', duration: 2000 })
     } catch (err) { console.error('打卡失败:', err); this.setData({ checking: false }); wx.showToast({ title: '打卡失败，请重试', icon: 'none' }) }
   },
   async loadCalendar() {
