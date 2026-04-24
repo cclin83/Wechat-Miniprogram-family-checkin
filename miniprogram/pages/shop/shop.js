@@ -44,6 +44,8 @@ Page({
       var rewards = await dbUtil.getRewardList(this.data.familyId)
       var myRedemptions = await dbUtil.getUserRedemptions(this.data.openid)
       var isAdmin = this.data.isAdmin
+      // 收集所有 cloud:// 媒体 URL 批量转换
+      var mediaIds = []
       for (var i = 0; i < rewards.length; i++) {
         rewards[i].redeemedByMe = myRedemptions.indexOf(rewards[i]._id) >= 0
         if (isAdmin && (rewards[i].redeemed || 0) > 0) {
@@ -51,6 +53,13 @@ Page({
         } else {
           rewards[i].redeemers = []
         }
+        if (rewards[i].mediaUrl && rewards[i].mediaUrl.indexOf('cloud://') === 0) {
+          mediaIds.push(rewards[i].mediaUrl)
+        }
+      }
+      if (mediaIds.length > 0) {
+        var urlMap = await util.batchGetTempUrls(mediaIds)
+        rewards.forEach(function(r) { if (urlMap[r.mediaUrl]) r.mediaUrl = urlMap[r.mediaUrl] })
       }
       this.setData({ rewards: rewards })
     } catch(e) { console.error('加载奖品失败:',e) }
