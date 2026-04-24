@@ -38,7 +38,15 @@ Page({
     }
   },
   async onPullDownRefresh() { await this.loadRewards(); await this.loadWishes(); var user = await dbUtil.getUserByOpenid(this.data.openid); if (user) this.setData({ userCoins: user.coins||0 }); wx.stopPullDownRefresh() },
-  async loadRewards() { if (!this.data.familyId) return; try { this.setData({ rewards: await dbUtil.getRewardList(this.data.familyId) }) } catch(e) { console.error('加载奖品失败:',e) } },
+  async loadRewards() {
+    if (!this.data.familyId) return
+    try {
+      var rewards = await dbUtil.getRewardList(this.data.familyId)
+      var myRedemptions = await dbUtil.getUserRedemptions(this.data.openid)
+      rewards.forEach(function(r) { r.redeemedByMe = myRedemptions.indexOf(r._id) >= 0 })
+      this.setData({ rewards: rewards })
+    } catch(e) { console.error('加载奖品失败:',e) }
+  },
   async loadWishes() { if (!this.data.familyId) return; try { this.setData({ wishes: await dbUtil.getWishList(this.data.familyId) }) } catch(e) { console.error('加载心愿失败:',e) } },
   onRewardTap(e) { const r = this.data.rewards[e.currentTarget.dataset.index]; if (r.type==='text'&&r.textContent) wx.showModal({ title: r.name, content: r.textContent, showCancel: false, confirmText: '知道了' }) },
   onRedeem(e) {
@@ -49,6 +57,7 @@ Page({
     var reward = this.data.rewards[index]
     console.log('[onRedeem] reward:', reward, 'userCoins:', this.data.userCoins)
     if (!reward) { wx.showToast({ title: '奖品数据异常', icon: 'none' }); return }
+    if (reward.redeemedByMe) { wx.showToast({ title: '你已经兑换过了', icon: 'none' }); return }
     if (this.data.userCoins < reward.coinsNeeded) { wx.showToast({ title: '金币不足，继续加油', icon: 'none' }); return }
     if ((reward.redeemed || 0) >= reward.stock) { wx.showToast({ title: '奖品已兑完', icon: 'none' }); return }
     wx.showModal({

@@ -1,0 +1,9 @@
+{
+  "triggers": [
+    {
+      "name": "dailyCalc",
+      "type": "timer",
+      "config": "0 0 23 * * * *"
+    }
+  ]
+}

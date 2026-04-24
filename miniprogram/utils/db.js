@@ -7,7 +7,7 @@ try {
   collections = {
     users: db.collection('users'), families: db.collection('families'),
     checkins: db.collection('checkins'), rewards: db.collection('rewards'), feeds: db.collection('feeds'),
-    wishes: db.collection('wishes')
+    wishes: db.collection('wishes'), redemptions: db.collection('redemptions')
   }
 } catch (e) {
   console.log('cloud database not available', e)
@@ -107,7 +107,13 @@ async function redeemReward(rewardId, openid, userCoins) {
     await collections.users.where({ openid }).update({ data: { coins: _.inc(r.coinsNeeded) } })
     throw new Error('奖品已兑完')
   }
+  // 记录兑换记录
+  await collections.redemptions.add({ data: { rewardId: rewardId, openid: openid, createdAt: db.serverDate() } })
   return r
+}
+async function getUserRedemptions(openid) {
+  const res = await collections.redemptions.where({ openid }).get()
+  return res.data.map(function(r) { return r.rewardId })
 }
 // === 心愿卡 ===
 async function createWish(data) {
@@ -153,4 +159,4 @@ async function getTodayRanking(familyId) {
   return ranking
 }
 
-module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward, createWish, getWishList, fulfillWish, getTodayRanking }
+module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward, getUserRedemptions, createWish, getWishList, fulfillWish, getTodayRanking }
