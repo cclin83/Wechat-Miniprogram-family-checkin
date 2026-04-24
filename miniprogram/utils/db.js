@@ -115,6 +115,15 @@ async function getUserRedemptions(openid) {
   const res = await collections.redemptions.where({ openid }).get()
   return res.data.map(function(r) { return r.rewardId })
 }
+async function getRewardRedemptions(rewardId) {
+  const res = await collections.redemptions.where({ rewardId: rewardId }).get()
+  if (res.data.length === 0) return []
+  var openids = res.data.map(function(r) { return r.openid })
+  var usersRes = await collections.users.where({ openid: _.in(openids) }).get()
+  var userMap = {}
+  usersRes.data.forEach(function(u) { userMap[u.openid] = u.nickName || '家人' })
+  return res.data.map(function(r) { return { openid: r.openid, nickName: userMap[r.openid] || '家人', createdAt: r.createdAt } })
+}
 // === 心愿卡 ===
 async function createWish(data) {
   // 条件更新：只有金币 >= 所需金币时才扣减，防止并发扣到负数
@@ -159,4 +168,4 @@ async function getTodayRanking(familyId) {
   return ranking
 }
 
-module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward, getUserRedemptions, createWish, getWishList, fulfillWish, getTodayRanking }
+module.exports = { db, _, collections, getOrCreateUser, updateUser, getUserByOpenid, createFamily, joinFamily, getFamily, getFamilyMembers, checkin, getMonthCheckins, getTodayCheckin, postFeed, getFeedList, likeFeed, unlikeFeed, commentFeed, createReward, getRewardList, redeemReward, getUserRedemptions, getRewardRedemptions, createWish, getWishList, fulfillWish, getTodayRanking }

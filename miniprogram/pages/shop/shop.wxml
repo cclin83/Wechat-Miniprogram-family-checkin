@@ -78,6 +78,9 @@
         <view wx:elif="{{userCoins >= item.coinsNeeded}}" class="redeem-btn" bindtap="onRedeem" data-index="{{index}}" data-id="{{item._id}}">兑换</view>
         <view wx:else class="redeem-btn disabled">金币不足</view>
       </view>
+      <view class="redeemer-list mt-sm" wx:if="{{isAdmin && item.redeemers.length > 0}}">
+        <view class="text-sm text-secondary">已兑换：<text wx:for="{{item.redeemers}}" wx:for-item="r" wx:key="openid">{{r.nickName}}{{index < item.redeemers.length - 1 ? '、' : ''}}</text></view>
+      </view>
       <view class="admin-actions flex-row mt-sm" wx:if="{{isAdmin}}">
         <text class="admin-btn" bindtap="editReward" data-index="{{index}}">编辑</text>
         <text class="admin-btn danger" bindtap="deleteReward" data-index="{{index}}" data-id="{{item._id}}">删除</text>

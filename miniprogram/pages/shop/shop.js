@@ -43,7 +43,15 @@ Page({
     try {
       var rewards = await dbUtil.getRewardList(this.data.familyId)
       var myRedemptions = await dbUtil.getUserRedemptions(this.data.openid)
-      rewards.forEach(function(r) { r.redeemedByMe = myRedemptions.indexOf(r._id) >= 0 })
+      var isAdmin = this.data.isAdmin
+      for (var i = 0; i < rewards.length; i++) {
+        rewards[i].redeemedByMe = myRedemptions.indexOf(rewards[i]._id) >= 0
+        if (isAdmin && (rewards[i].redeemed || 0) > 0) {
+          rewards[i].redeemers = await dbUtil.getRewardRedemptions(rewards[i]._id)
+        } else {
+          rewards[i].redeemers = []
+        }
+      }
       this.setData({ rewards: rewards })
     } catch(e) { console.error('加载奖品失败:',e) }
   },
