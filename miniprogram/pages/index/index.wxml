@@ -4,8 +4,8 @@
     <view class="welcome-title">欢迎来到亲情健步</view>
     <view class="welcome-desc">创建或加入一个家庭，和家人一起健康打卡吧</view>
     <view class="welcome-actions">
-      <button class="btn-primary" bindtap="goCreateFamily">创建家庭</button>
-      <button class="btn-secondary mt-md" bindtap="goJoinFamily">加入家庭</button>
+      <button class="btn-primary" bindtap="goJoinFamily">加入已有家庭（输入邀请码）</button>
+      <button class="btn-secondary mt-md" bindtap="goCreateFamily">创建新家庭</button>
     </view>
   </view>
   <block wx:else>
