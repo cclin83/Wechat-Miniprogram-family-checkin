@@ -19,7 +19,16 @@ Page({
     else if (options.action === 'join') this.joinFamily()
   },
   async onShow() {
-    this.setData({ largeText: wx.getStorageSync("largeText") || false }); await this.loadUserData() },
+    this.setData({ largeText: wx.getStorageSync("largeText") || false })
+    await this.loadUserData()
+    // 已加入家庭但未设置头像或昵称时，自动弹出引导
+    if (this.data.familyId) {
+      var ui = this.data.userInfo || {}
+      if (!ui.nickName || ui.nickName === '家人' || !ui.avatarUrl) {
+        this.setData({ showProfileSetup: true })
+      }
+    }
+  },
   async loadUserData() {
     try {
       const user = await dbUtil.getUserByOpenid(this.data.openid)

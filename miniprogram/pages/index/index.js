@@ -33,6 +33,19 @@ Page({
       await this.loadFamilyData()
       this.setData({ feedPage: 0, feedList: [], hasMore: true })
       await this.loadFeed()
+      // 未设置头像或昵称时提醒跳转设置
+      var user = await db.getUserByOpenid(this.data.openid)
+      if (user && (!user.nickName || user.nickName === '家人' || !user.avatarUrl)) {
+        wx.showModal({
+          title: '完善个人信息',
+          content: '设置头像和昵称，让家人认识你吧',
+          confirmText: '去设置',
+          confirmColor: '#FF8C42',
+          success: function(res) {
+            if (res.confirm) wx.switchTab({ url: '/pages/profile/profile' })
+          }
+        })
+      }
     }
   },
   async onPullDownRefresh() {
